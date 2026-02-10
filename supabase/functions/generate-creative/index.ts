@@ -277,6 +277,13 @@ TEXT RULES:
 - Text color: ${brand.textColor}. Accent color: ${brand.accentColor}.
 - ALL text HORIZONTALLY CENTERED on the canvas.
 
+HEADLINE STYLE (APPLIES TO ALL TEMPLATES):
+- Headlines are NEVER inside a box, banner, pill, rectangle, or any container shape.
+- Headlines are ALWAYS rendered as clean, bold, standalone text directly on the background.
+- Use text shadow (subtle, 2px, dark) for readability on busy or gradient backgrounds.
+- The review template headline style is the reference: bold serif or sans-serif text, large, floating cleanly on a rich background with no UI elements around it.
+- This rule also applies to subheadlines — no containers, no pills, no boxes.
+
 OUTPUT: EXACTLY ${canvasSize} pixels. ${dimensions}.`;
 }
 
@@ -301,20 +308,22 @@ THIS IS A PRODUCT POSTER — bold, in-your-face, designed to make someone stop s
 
 LAYOUT:
 
-1. HEADLINE BANNER — TOP OF CANVAS
+1. HEADLINE — TOP OF CANVAS
    - Text: "${headline}"
-   - Inside a bold rounded-rectangle banner
-   - Banner fill: ${brand.accentColor} (brand accent color)
-   - Text: White or high-contrast light color
+   - NO box, NO banner, NO pill shape, NO rounded rectangle behind the text
+   - Render as BOLD, LARGE standalone text directly on the background
+   - Text color: White or cream (on dark/rich backgrounds) OR dark charcoal (on light backgrounds) — whichever gives maximum contrast
+   - Add a subtle text shadow (2px, 50% opacity black) if needed for readability on complex backgrounds
    - TEXT MUST BE MASSIVE — this is the scroll-stopper
    - Max 2 lines. Takes up top 12-18% of canvas.
    - Centered horizontally
 
-2. SUBHEADLINE PILL — Directly below headline, overlapping bottom edge by ~30%
+2. SUBHEADLINE — Directly below headline
    - Text: "${subheadline}"
-   - Inside a contrasting rounded pill (different color than headline banner)
-   - MAX 1 LINE — reduce font size if needed
-   - Centered horizontally
+   - NO pill shape, NO box, NO container behind the text
+   - Render as clean text, slightly smaller and lighter weight than headline
+   - Same color as headline or slightly reduced opacity (80%)
+   - Single line, centered horizontally
 
 3. PRODUCT — CENTER HERO
    - Place the attached product image CENTER STAGE
@@ -459,11 +468,14 @@ THIS IS A DEBATE AD — IT PICKS A FIGHT. The design should feel OPINIONATED and
 
 LAYOUT:
 
-1. HEADLINE — Full width across top, inside a bold banner/bar
+1. HEADLINE — Full width across top
    - Text: "${adCopy.headline}"
-   - MASSIVE bold text, white on dark or dark on accent color
-   - Should feel like a provocative newspaper headline
-   - Takes up top 15-20% of canvas
+   - NO banner, NO bar, NO box, NO colored rectangle behind the text
+   - MASSIVE bold text rendered directly on the background
+   - Text color: White or cream (on dark backgrounds) OR dark charcoal/black (on light backgrounds)
+   - Add subtle text shadow for readability if background is complex
+   - Should feel bold, confident, and clean — like the review template headline style
+   - Takes up top 15-20% of canvas, centered
 
 2. SPLIT COMPARISON — Two distinct columns below headline
    LEFT COLUMN (THE WINNER — our product):
@@ -515,10 +527,10 @@ LAYOUT:
 
 1. HEADLINE — Top of canvas
    - Text: "${headline}"
-   - BOLD, LARGE, commanding
-   - Inside a rounded pill/banner shape
-   - Banner color: ${brand.accentColor}
-   - Text color: White or high-contrast
+   - NO box, NO banner, NO pill behind the text
+   - BOLD, LARGE standalone text directly on the background
+   - High contrast color against background (white on dark, dark on light)
+   - Subtle text shadow if needed for readability
    - Max 2 lines
    - Centered
 
