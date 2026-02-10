@@ -169,6 +169,10 @@ interface AdCopyInput {
   comparisonPoints?: { ours: string[]; theirs: string[] };
   reviewCount?: string; rating?: string;
   compliance_safe_version?: string;
+  scene_description?: string;
+  education_copy?: string;
+  footer_copy?: string;
+  badge_pills?: string[];
 }
 interface BrandTypography { headingFont: string | null; bodyFont: string | null; fontSizes?: { h1?: string; h2?: string; body?: string } | null; fontStacks?: { heading?: string[]; body?: string[] } | null; }
 interface ConfirmedBrandKitInput {
@@ -224,6 +228,8 @@ function buildPromptForTemplate(
       return buildComparisonPrompt(adCopy, aspectRatio, canvasSize, dimensions, brand);
     case 'benefits':
       return buildBenefitsPrompt(adCopy, aspectRatio, canvasSize, dimensions, brand);
+    case 'concept':
+      return buildConceptPrompt(adCopy, aspectRatio, canvasSize, dimensions, brand);
     default:
       return buildFeaturesBenefitsPrompt(adCopy, aspectRatio, canvasSize, dimensions, brand);
   }
@@ -376,4 +382,33 @@ LAYOUT:
 3. PRODUCT: alongside or below benefits, 40-50% canvas width, dramatic lighting, can slightly overlap list for depth.
 
 OUTPUT: EXACTLY ${canvasSize} pixels. ${dimensions}.`;
+}
+
+function buildConceptPrompt(adCopy: AdCopyInput, aspectRatio: string, canvasSize: string, dimensions: string, brand: BrandValues): string {
+  const headline = adCopy.headline || 'CONCEPT CREATIVE';
+  const sceneDesc = adCopy.scene_description || 'Dramatic cinematic product scene with moody lighting';
+  const educationCopy = adCopy.education_copy || '';
+  const footerCopy = adCopy.footer_copy || '';
+  const badgePills = adCopy.badge_pills?.join('  |  ') || '';
+  const safeZone = '40px';
+
+  return `Generate a ${aspectRatio} surreal, hyper-real, cinematic advertisement. EXACTLY ${canvasSize} pixels (${dimensions}). FULL-BLEED — no borders/frames.
+
+THIS IS A CONCEPT CREATIVE — the scene IS the ad. Not a standard product layout.
+
+SCENE: ${sceneDesc}
+
+PRODUCT: The attached image is the HERO element (15-25% canvas). SHARP, well-lit, label readable. Naturally integrated into the scene — sitting on a surface, emerging from concept, positioned as the solution. Packaging text ACCURATE and UNCHANGED.
+
+TYPOGRAPHY: Study the product packaging. Match its font style for headlines.
+- Headline: "${headline}" — BOLD, ALL CAPS, top 20-30%. WHITE on dark scenes, DARK on light. Text shadow (2px, rgba(0,0,0,0.6)). LARGE and dominant.
+${educationCopy ? `- Education: "${educationCopy}" — smaller, lighter, below headline, 80% opacity. Max 2 lines.` : ''}
+${footerCopy ? `- Footer: "${footerCopy}" — small, subtle, bottom, 60% opacity.` : ''}
+${badgePills ? `- Pills: ${badgePills} — small rounded-rect pills, horizontal row, bottom 10%, semi-transparent backing, clean text.` : ''}
+
+VISUAL: 8K quality, cinematic color grading, dramatic volumetric lighting, depth of field (product sharp, bg subtle blur). Frame from a high-budget commercial. Colors complement brand (${brand.bgColor}, ${brand.accentColor}). Rich shadows, specular highlights, realistic textures.
+
+CONTRAST: All text instantly readable. Dark scene → white text + shadow. Light scene → dark text. NEVER blend text into scene.
+
+SAFE ZONES: ${safeZone} padding. OUTPUT: EXACTLY ${canvasSize} pixels.`;
 }

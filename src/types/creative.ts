@@ -68,7 +68,7 @@ export interface FeatureBenefitCallout {
 export interface AdCopy {
   headline: string;
   subheadline?: string;
-  type: 'feature' | 'benefit' | 'comparison' | 'review' | 'features_benefits';
+  type: 'feature' | 'benefit' | 'comparison' | 'review' | 'features_benefits' | 'concept';
   bulletPoints?: string[];  // Keep for backward compatibility
   
   // New fields for features_benefits spec
@@ -84,12 +84,18 @@ export interface AdCopy {
   };
   reviewCount?: string;
   rating?: string;
+
+  // Concept creative fields
+  scene_description?: string;
+  education_copy?: string;
+  footer_copy?: string;
+  badge_pills?: string[];
 }
 
 export interface AdTemplate {
   id: string;
   name: string;
-  type: 'features_benefits' | 'comparison' | 'review' | 'benefits';
+  type: 'features_benefits' | 'comparison' | 'review' | 'benefits' | 'concept';
   aspectRatio: '9:16' | '1:1' | '4:5';
   description: string;
 }
@@ -187,5 +193,19 @@ export const AD_TEMPLATES: AdTemplate[] = [
     type: 'benefits',
     aspectRatio: '1:1',
     description: 'Benefit-focused square ad'
+  },
+  {
+    id: 'concept_916',
+    name: 'Concept Creative',
+    type: 'concept',
+    aspectRatio: '9:16',
+    description: 'Surreal cinematic ad with visual metaphor'
+  },
+  {
+    id: 'concept_11',
+    name: 'Concept Creative',
+    type: 'concept',
+    aspectRatio: '1:1',
+    description: 'Cinematic concept ad in square format'
   }
 ];
