@@ -104,11 +104,15 @@ serve(async (req) => {
       return new Response(JSON.stringify({ success: false, error: choiceError.message || 'AI generation failed' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url
-      || (Array.isArray(data.choices?.[0]?.message?.content)
-          ? data.choices[0].message.content.find((c: any) => c.type === 'image')?.image_url?.url
-          : null)
-      || null;
+    // Extract image with fallback paths
+    let imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    if (!imageUrl) {
+      const content = data.choices?.[0]?.message?.content;
+      if (Array.isArray(content)) {
+        const imageBlock = content.find((c: any) => c.type === 'image' || c.type === 'image_url');
+        imageUrl = imageBlock?.image_url?.url || imageBlock?.url;
+      }
+    }
 
     if (!imageUrl) {
       console.error('No image in response:', JSON.stringify(data, null, 2));
@@ -119,7 +123,11 @@ serve(async (req) => {
 
     const productTitle = productData?.title || 'Unknown Product';
     try {
-      EdgeRuntime.waitUntil(saveCreativeToGallery(imageUrl, template.id, productTitle));
+      if (typeof EdgeRuntime !== 'undefined' && EdgeRuntime.waitUntil) {
+        EdgeRuntime.waitUntil(saveCreativeToGallery(imageUrl, template.id, productTitle));
+      } else {
+        saveCreativeToGallery(imageUrl, template.id, productTitle).catch(e => console.error('Gallery save failed:', e));
+      }
     } catch {
       saveCreativeToGallery(imageUrl, template.id, productTitle).catch(err => console.error('Background save failed:', err));
     }
@@ -211,6 +219,43 @@ function buildPromptForTemplate(
 
 interface BrandValues { bgColor: string; textColor: string; accentColor: string; ctaColor: string; headingFont: string; bodyFont: string; }
 
+function buildCoreCreativeDirection(brand: BrandValues, canvasSize: string, dimensions: string): string {
+  return `YOU ARE A SENIOR ART DIRECTOR designing a scroll-stopping Meta ad. This must look like a real ad from a $100M DTC brand — NOT like an AI template fill.
+
+CREATIVE DIRECTION:
+- This is a POSTER-STYLE PRODUCT ADVERTISEMENT, not a catalog photo
+- The product is the HERO — it should feel dramatic, premium, owning the frame
+- The overall energy should make someone STOP SCROLLING and actually look
+
+BACKGROUND PHILOSOPHY (CRITICAL — THIS IS WHAT MAKES OR BREAKS THE AD):
+- NEVER use a flat, single-color background. That looks cheap and AI-generated.
+- The background should be a RICH, CONTEXTUAL ENVIRONMENT that matches the product's brand story.
+- Choose ONE of these background approaches based on the product category:
+  * SURREAL INGREDIENT WORLD: Floating botanicals, herbs, fruits, or raw ingredients relevant to the product, softly blurred behind the product with dramatic depth of field. (Best for: supplements, food, wellness)
+  * BOLD GRADIENT WASH: Rich, moody gradient using the brand's color palette — think dramatic lighting, color transitions, maybe a subtle texture overlay. (Best for: beauty, skincare, modern brands)
+  * LIFESTYLE TEXTURE: A real-world surface like marble, terracotta, linen, dark wood, or concrete that matches the brand's aesthetic. Product sits on it with real shadow. (Best for: premium products, artisanal brands)
+  * DRAMATIC STUDIO: Deep black or very dark moody background with a single dramatic spotlight on the product. High contrast, editorial feel. (Best for: bold/masculine brands, nighttime products)
+- The background should use brand colors (${brand.bgColor}) as a TONAL GUIDE, not as a literal flat fill.
+- Background must have DEPTH — layers, blur, gradient, texture. Never flat.
+
+PRODUCT INTEGRATION:
+- The attached image is the product. Integrate it as the HERO.
+- Product should feel LARGER THAN LIFE — taking up 40-55% of the canvas.
+- Use dramatic, directional lighting (key light from upper-left, subtle rim light)
+- Natural grounding shadow OR floating with soft glow underneath
+- Preserve the product EXACTLY as provided — do not alter, redraw, or stylize the label/packaging.
+- Do NOT add other products or objects unless they are relevant ingredient elements in the background.
+
+TEXT RULES:
+- ALL text must be CRISP, SHARP, and clearly readable at mobile phone size
+- Headline: BOLD, LARGE — this is the scroll-stopper. Should dominate the top 25-30% of canvas.
+- Use high contrast: light text on dark, dark text on light. Always.
+- Text color: ${brand.textColor}. Accent color: ${brand.accentColor}.
+- ALL text HORIZONTALLY CENTERED on the canvas.
+
+OUTPUT: EXACTLY ${canvasSize} pixels. ${dimensions}.`;
+}
+
 function buildFeaturesBenefitsPrompt(adCopy: AdCopyInput, aspectRatio: string, canvasSize: string, dimensions: string, brand: BrandValues): string {
   const headline = adCopy.headline_primary || adCopy.headline || 'Premium Quality';
   const subheadline = adCopy.subheadline_primary || adCopy.subheadline || '';
@@ -222,50 +267,67 @@ function buildFeaturesBenefitsPrompt(adCopy: AdCopyInput, aspectRatio: string, c
   const sorted = [...featureBenefits].sort((a, b) => a.priority_rank - b.priority_rank).slice(0, 4);
   const calloutList = sorted.map((c, i) => `   ${i + 1}. "${c.text}" (icon keywords: ${c.meaning_keywords})`).join('\n');
 
-  return `Generate a scroll-stopping Meta ad image for a DTC supplement/wellness brand.
+  const coreDirection = buildCoreCreativeDirection(brand, canvasSize, dimensions);
 
-CREATIVE STYLE: Modern DTC performance ad — think Grüns, AG1, Obvi, RYZE level quality. This should look like it was designed in Figma by a senior brand designer, NOT generated by AI. Premium, editorial, confident.
+  return `Generate a scroll-stopping ${aspectRatio} Features & Benefits product poster for Meta ads.
 
-ASPECT RATIO: ${aspectRatio}
-DIMENSIONS: EXACTLY ${canvasSize} pixels (${dimensions}).
+${coreDirection}
 
-VISUAL HIERARCHY (top to bottom):
+THIS IS A PRODUCT POSTER — bold, in-your-face, designed to make someone stop scrolling in under 0.5 seconds.
 
-1. HEADLINE BANNER — Takes up ~15% of top area
+LAYOUT:
+
+1. HEADLINE BANNER — TOP OF CANVAS
    - Text: "${headline}"
-   - Style: HUGE bold text, ALL CAPS or Title Case, minimum 60pt equivalent
-   - Sits inside a rounded-corner colored banner/pill shape
-   - Banner color: ${brand.accentColor}
-   - Text color: White or high-contrast light color
-   - This is the SCROLL-STOPPER — make it DOMINANT and eye-catching
+   - Inside a bold rounded-rectangle banner
+   - Banner fill: ${brand.accentColor} (brand accent color)
+   - Text: White or high-contrast light color
+   - TEXT MUST BE MASSIVE — this is the scroll-stopper
+   - Max 2 lines. Takes up top 12-18% of canvas.
+   - Centered horizontally
 
-2. SUBHEADLINE — Directly below headline
+2. SUBHEADLINE PILL — Directly below headline, overlapping bottom edge by ~30%
    - Text: "${subheadline}"
-   - Smaller pill/badge shape, DIFFERENT color than headline banner
-   - Clean, readable, single line. MAX 1 LINE.
-   - Slightly overlaps the bottom edge of the headline banner
+   - Inside a contrasting rounded pill (different color than headline banner)
+   - MAX 1 LINE — reduce font size if needed
+   - Centered horizontally
 
-3. PRODUCT HERO — Center ~50% of canvas
-   - Place the product from the attached image CENTER STAGE
-   - Product should be LARGE — filling ~50% of canvas width
-   - Professional product photography look: soft directional lighting from upper-left, subtle shadow on a clean surface
-   - Product must look premium, real, tangible — like a professional e-commerce product shot
-   - DO NOT alter the product design, label, or colors
+3. PRODUCT — CENTER HERO
+   - Place the attached product image CENTER STAGE
+   - Product should be LARGE — 45-55% of canvas width
+   - Dramatic, premium lighting
+   - Natural shadow and grounding on the background environment
 
-4. FOUR BENEFIT CALLOUTS — Arranged around the product
-   - Two on the LEFT (staggered vertically), two on the RIGHT (staggered vertically)
-   - Each callout: small clean line icon (16px, thin stroke, Lucide/Phosphor style) + 2-3 word text
-   - Connected to the product with thin, elegant curved arrows (1-2px weight, smooth, small arrowhead)
-   - Callouts:
+4. FOUR BENEFIT CALLOUTS — Staggered around product
+   - LEFT SIDE (staggered vertically):
+     - Callout 1: Upper-left area
+     - Callout 2: Lower-left area
+   - RIGHT SIDE (staggered vertically):
+     - Callout 3: Upper-right area
+     - Callout 4: Lower-right area
+   
+   Each callout = ICON + TEXT + CURVED ARROW pointing to product:
+   - Icon: Small (14-18px), thin line style, relevant to the benefit
+   - Text: 2-4 words, clean and readable
+   - Arrow: Thin (1-2px), smooth curve toward product, small arrowhead
+   - Left callouts: text right-aligned, arrow curves right
+   - Right callouts: text left-aligned, arrow curves left
+
+   Callouts:
 ${calloutList}
 
-DESIGN RULES:
-- Background: ${brand.bgColor} with subtle gradient — slightly lighter at center, slightly darker at edges. NOT flat. Add very subtle texture or noise for depth.
-- Typography: "${brand.headingFont}" for headlines, "${brand.bodyFont}" for callouts. All text must be CRISP, SHARP, and READABLE at mobile phone size.
-- Icons: Minimal thin line icons — NOT filled, NOT emoji-style, NOT clip-art.
-- Arrows: Thin (1-2px), smooth curved lines with small arrowheads. NOT hand-drawn. NOT thick. NOT sketchy.
-- Overall feel: Premium, clean, modern, confident. Like a $500M DTC brand's Instagram ad.
-- NO watermarks, NO borders, NO extra decorative elements.
+ICON STYLE:
+- Thin, elegant, modern line icons (like Lucide or Phosphor)
+- NOT filled, NOT emoji, NOT clip-art
+- Color matches callout text color
+- Category-aware: supplements→body/leaf/shield, skincare→droplet/sparkle, food→utensils/heart
+
+ARROW STYLE:
+- Thin (1-2px), smooth curved lines
+- Subtle, elegant — NOT thick or hand-drawn
+- Small arrowhead at product end
+
+TYPOGRAPHY: "${brand.headingFont}" for headlines, "${brand.bodyFont}" for callouts.
 
 WHAT NOT TO DO:
 - Do NOT make text blurry or AI-looking
@@ -279,8 +341,12 @@ OUTPUT: EXACTLY ${canvasSize} pixels. ${dimensions}.`;
 
 function buildReviewPrompt(adCopy: AdCopyInput, aspectRatio: string, canvasSize: string, dimensions: string, brand: BrandValues): string {
   const actualRating = adCopy.rating || '4.8';
-  const actualReviewCount = adCopy.reviewCount || '10,000';
-  const ratingLine = `Rated ${actualRating}/5 by ${actualReviewCount}+ happy customers`;
+  const reviewCountRaw = adCopy.reviewCount || '0';
+  const reviewCountNum = parseInt(reviewCountRaw.replace(/[^0-9]/g, ''));
+  const showReviewCount = reviewCountNum >= 500;
+  const ratingLine = showReviewCount
+    ? `Rated ${actualRating}/5 by ${adCopy.reviewCount}+ customers`
+    : adCopy.subheadline || `★★★★★ ${actualRating}/5`;
 
   // Ensure headline is complete
   const words = adCopy.headline.split(' ');
@@ -289,54 +355,54 @@ function buildReviewPrompt(adCopy: AdCopyInput, aspectRatio: string, canvasSize:
   const lastWord = headline.split(' ').pop()?.toLowerCase();
   if (lastWord && incompleteEndings.includes(lastWord)) headline = headline.split(' ').slice(0, -1).join(' ');
 
-  return `Generate a premium customer testimonial Meta ad for a DTC wellness/supplement brand.
+  const coreDirection = buildCoreCreativeDirection(brand, canvasSize, dimensions);
 
-CREATIVE STYLE: Clean, minimal social proof ad — like Arrae, Seed, or Athletic Greens review ads. Premium and editorial, not busy. Less is more.
+  return `Generate a premium, editorial-style ${aspectRatio} customer testimonial Meta ad.
 
-ASPECT RATIO: ${aspectRatio}
-DIMENSIONS: EXACTLY ${canvasSize} pixels (${dimensions}).
+${coreDirection}
 
-LAYOUT (top to bottom):
+THIS IS A SOCIAL PROOF AD — it should feel like an authentic customer endorsement on a premium brand's Instagram.
 
-1. FIVE STARS — Small, elegant, evenly spaced filled stars at top
-   - Color: gold or ${brand.textColor}
-   - Size: Small (~16px each), centered horizontally
-   - Positioned in top 10% of canvas
+LAYOUT:
 
-2. TESTIMONIAL QUOTE — The hero element
+1. FIVE STARS — Top of canvas
+   - 5 small, elegant filled stars in a horizontal row
+   - Color: Gold (#D4A853) or brand accent color
+   - Centered horizontally, positioned in top 8% of canvas
+   - Small and tasteful — NOT oversized
+
+2. TESTIMONIAL QUOTE — The HERO text element
    - Text: "${headline}"
-   - In quotation marks (elegant curly quotes)
-   - LARGE, bold, serif or elegant sans-serif font
-   - Takes up ~25% of canvas height
-   - Centered horizontally
-   - Max 2 lines. If text is too long, REDUCE FONT SIZE to fit in 2 lines. NEVER 3+ lines.
+   - In quotation marks ("..." style, elegant)
+   - LARGE, bold, commanding serif or bold sans-serif
+   - MAX 3 LINES. If text is too long, reduce font size to fit in 3 lines.
+   - Centered horizontally, positioned in upper 20-40% of canvas
    - Color: ${brand.textColor}, bold weight
+   - This should feel like a pull-quote from a magazine
    - Font: "${brand.headingFont}" or clean serif like Playfair Display
 
 3. RATING LINE — Below the quote
    - Text: "${ratingLine}"
-   - Smaller, lighter weight
+   - Smaller, lighter weight, understated
    - Single line, centered
    - Color: ${brand.textColor} at 60% opacity
 
-4. PRODUCT — Lower half of canvas
-   - Product from attached image, placed in lower-center
-   - Professional studio look with soft shadow
-   - Product takes up ~40% of canvas width
-   - Grounded on the surface, not floating
+4. PRODUCT — Lower half of canvas, centered
+   - Product from attached image, LARGE and commanding
+   - Professional lighting, dramatic but clean
+   - Natural grounding or floating with soft shadow
+   - Product takes up ~45% of canvas width
 
 BACKGROUND:
-- ${brand.bgColor} with very subtle warm gradient — slightly lighter in the center where product sits
-- Clean, minimal, premium feel
+- Rich, warm gradient using brand palette (tonal guide: ${brand.bgColor})
+- NOT a flat single color
+- Subtle texture or depth — could be a soft radial gradient, fabric-like texture, or warm bokeh
+- Should feel premium, editorial, magazine-quality
 
-DESIGN RULES:
-- This is an EDITORIAL, MINIMAL ad. Less is more.
-- All text must be crisp and sharp
-- Stars should be simple filled star shapes
-- Overall feel: Trustworthy, premium, like a testimonial from a luxury wellness brand
-- NO watermarks, NO borders, NO extra elements
-
-CRITICAL DATA ACCURACY: The rating is ${actualRating} out of 5. This MUST appear as "${actualRating}/5" in the image. Do NOT change this number. Do NOT use 1/5. The actual verified rating is ${actualRating}/5.
+CRITICAL DATA ACCURACY:
+- The star rating is ${actualRating} out of 5. MUST appear exactly as "${actualRating}/5" if shown.
+- Do NOT change, invent, or hallucinate any rating number.
+- If the rating line says "1/5" that is WRONG. Use ${actualRating}/5.
 
 WHAT NOT TO DO:
 - Do NOT change the rating number — it MUST be ${actualRating}/5
@@ -348,53 +414,49 @@ OUTPUT: EXACTLY ${canvasSize} pixels. ${dimensions}.`;
 }
 
 function buildComparisonPrompt(adCopy: AdCopyInput, aspectRatio: string, canvasSize: string, dimensions: string, brand: BrandValues): string {
-  const oursPoints = adCopy.comparisonPoints?.ours?.join('\n   ') || '✓ Clean ingredients\n   ✓ Third-party tested\n   ✓ Full doses\n   ✓ No fillers';
-  const theirsPoints = adCopy.comparisonPoints?.theirs?.join('\n   ') || '✗ Artificial additives\n   ✗ No testing\n   ✗ Underdosed\n   ✗ Hidden fillers';
+  const oursPoints = adCopy.comparisonPoints?.ours?.map(p => `   ${p}`).join('\n') || '   ✓ Clean ingredients\n   ✓ Third-party tested\n   ✓ Full doses\n   ✓ No fillers';
+  const theirsPoints = adCopy.comparisonPoints?.theirs?.map(p => `   ${p}`).join('\n') || '   ✗ Artificial additives\n   ✗ No testing\n   ✗ Underdosed\n   ✗ Hidden fillers';
 
-  return `Generate a bold "Us vs Them" comparison Meta ad for a DTC supplement/wellness brand.
+  const coreDirection = buildCoreCreativeDirection(brand, canvasSize, dimensions);
 
-CREATIVE STYLE: High-contrast split comparison — think supplement brand challenger ads. Bold, opinionated, scroll-stopping. Clean and modern, NOT cluttered.
+  return `Generate a BOLD, high-impact ${aspectRatio} "Us vs Them" comparison Meta ad.
 
-ASPECT RATIO: ${aspectRatio}
-DIMENSIONS: EXACTLY ${canvasSize} pixels (${dimensions}).
+${coreDirection}
+
+THIS IS A DEBATE AD — IT PICKS A FIGHT. The design should feel OPINIONATED and CONFIDENT.
 
 LAYOUT:
 
-1. HEADLINE across full width at top
+1. HEADLINE — Full width across top, inside a bold banner/bar
    - Text: "${adCopy.headline}"
-   - Bold, large, provocative, ALL CAPS or Title Case
-   - Color: ${brand.textColor}
-   - Takes up top ~12% of canvas
+   - MASSIVE bold text, white on dark or dark on accent color
+   - Should feel like a provocative newspaper headline
+   - Takes up top 15-20% of canvas
 
-2. SPLIT DESIGN — Two columns below headline
+2. SPLIT COMPARISON — Two distinct columns below headline
+   LEFT COLUMN (THE WINNER — our product):
+   - Warm, positive background tint (use brand accent color at 15% opacity)
+   - Green checkmarks (bold, modern style — not clip-art)
+   - Points:
+${oursPoints}
+   - Text should be bold, confident, specific
 
-   LEFT SIDE (the winner — "Us"):
-   - Slightly warm/positive tint or subtle ${brand.accentColor} wash
-   - Green checkmarks + text for each point:
-   ${oursPoints}
-   - Clean, modern typography
-   - Product placed here, overlapping center divide slightly
+   RIGHT COLUMN (THE LOSER — the competition):
+   - Cool, muted, grey/washed-out background tint
+   - Red X marks (bold, clear)
+   - Points:
+${theirsPoints}
+   - Text should feel damning but factual
 
-   RIGHT SIDE (the loser — "Them"):
-   - Slightly cool/negative tint — muted grey or desaturated
-   - Red/grey X marks + text for each point:
-   ${theirsPoints}
-   - Same typography, but the points feel clearly inferior
+3. PRODUCT — Placed on the LEFT (winning) side, overlapping the center divider slightly
+   - Product is the hero of the winning side
+   - Angled slightly (~5-10° tilt) to add dynamism
+   - Dramatic product lighting, premium feel
 
-3. PRODUCT — Placed on the LEFT (winning) side
-   - Product from attached image
-   - Overlaps the center divider slightly
-   - Professional, grounded with shadow
-
-DESIGN RULES:
-- Background: Left uses warm brand color, right uses muted cool grey
-- Clear visual divider between the two sides (subtle line or color boundary)
+DESIGN ENERGY: Think debate stage, confident brand, "the choice is obvious" energy
+- Strong vertical divider between columns (can be subtle gradient fade or clean line)
 - Typography: "${brand.headingFont}" for headline, "${brand.bodyFont}" for points
-- Checkmarks: Clean, green, consistent size
-- X marks: Clean, red or grey, consistent size
-- Overall feel: Bold, confident, "the choice is obvious"
-- All text crisp and readable at mobile size
-- NO watermarks, NO borders
+- Overall feel: Bold, editorial, makes the viewer instantly see which side wins
 
 OUTPUT: EXACTLY ${canvasSize} pixels. ${dimensions}.`;
 }
@@ -403,44 +465,45 @@ function buildBenefitsPrompt(adCopy: AdCopyInput, aspectRatio: string, canvasSiz
   const headline = adCopy.headline_primary || adCopy.headline || 'Premium Benefits';
   const benefits = adCopy.bulletPoints?.join('\n   • ') || adCopy.feature_benefits?.map(fb => fb.text).join('\n   • ') || 'Clean ingredients\n   • Science-backed\n   • Premium quality';
 
-  return `Generate a clean, benefit-focused Meta ad for a DTC supplement/wellness brand.
+  const coreDirection = buildCoreCreativeDirection(brand, canvasSize, dimensions);
 
-CREATIVE STYLE: Minimalist, premium DTC ad — clean and confident. Think AG1, Seed, or Ritual style. Focused entirely on communicating product benefits with visual clarity.
+  return `Generate a bold, listicle-style ${aspectRatio} benefits advertisement for Meta.
 
-ASPECT RATIO: ${aspectRatio}
-DIMENSIONS: EXACTLY ${canvasSize} pixels (${dimensions}).
+${coreDirection}
+
+THIS IS A "MINI LANDING PAGE" AD — clean, scannable, benefit-focused. Think of it as a listicle someone can absorb in 2 seconds.
 
 LAYOUT:
 
-1. HEADLINE at top
+1. HEADLINE — Top of canvas
    - Text: "${headline}"
-   - Bold, large, inside a rounded pill/banner shape
+   - BOLD, LARGE, commanding
+   - Inside a rounded pill/banner shape
    - Banner color: ${brand.accentColor}
    - Text color: White or high-contrast
-   - Takes up top ~12% of canvas
+   - Max 2 lines
+   - Centered
 
-2. PRODUCT — Center of canvas
-   - Product from attached image, large and prominent (~50% of canvas width)
-   - Professional studio look: soft lighting, subtle shadow, grounded on surface
-   - DO NOT alter product design or colors
-
-3. BENEFITS LIST — Below or around the product
-   - Clean list with small line icons + short text for each benefit:
+2. BENEFITS LIST — Vertically stacked, clean layout
+   - Each benefit has a small thin line icon + text
+   - Icons: thin line style (Lucide/Phosphor), colored with brand accent
+   - Text: Clean, readable, 3-5 words each
+   - Subtle separator or spacing between items
+   - Benefits:
    • ${benefits}
-   - Icons: thin line style (Lucide/Phosphor), consistent
-   - Text: "${brand.bodyFont}", clean and readable
-   - Color: ${brand.textColor}
 
-BACKGROUND:
-- ${brand.bgColor} with subtle gradient for depth — NOT flat
-- Premium, clean feel
+3. PRODUCT — Positioned alongside or below the benefits list
+   - Hero treatment, dramatic lighting
+   - Can be slightly overlapping the benefits list for visual depth
+   - Takes up ~40-50% of canvas width
 
-DESIGN RULES:
-- Typography: "${brand.headingFont}" for headline, "${brand.bodyFont}" for benefits
-- All text crisp and sharp at mobile size
-- Minimal design — no clutter, no extra elements
-- Overall feel: Premium, trustworthy, clean
-- NO watermarks, NO borders
+BACKGROUND: Rich gradient or textured surface using brand palette (${brand.bgColor} as tonal guide). NOT flat.
+TYPOGRAPHY: "${brand.headingFont}" for headline, "${brand.bodyFont}" for benefits.
+
+WHAT NOT TO DO:
+- Do NOT use a flat single-color background
+- Do NOT make text small or hard to read
+- Do NOT clutter with too many elements
 
 OUTPUT: EXACTLY ${canvasSize} pixels. ${dimensions}.`;
 }

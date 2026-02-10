@@ -142,9 +142,9 @@ export function useCreativeGenerator() {
     }]);
 
     try {
-      // Send raw product image directly to generate-creative (no background removal step)
-      setLoadingStage('Creating ad creative...');
-      console.log('Generating creative with raw product image...');
+      // Send raw product image directly — AI handles product integration natively
+      setLoadingStage('Designing your ad...');
+      console.log('Generating creative — sending raw product image to AI...');
 
       const { data, error } = await supabase.functions.invoke('generate-creative', {
         body: {
