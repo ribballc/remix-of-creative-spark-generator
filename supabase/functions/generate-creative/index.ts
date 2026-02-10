@@ -301,6 +301,28 @@ NUMBER FORMATTING (MANDATORY):
 - NEVER render a number like "10000" or "1000" without a comma. Always "10,000" and "1,000".
 - This applies to review counts, customer counts, dosages, and any numeric text in the ad.
 
+BRAND TYPOGRAPHY MATCHING (APPLIES TO ALL TEXT):
+- Before rendering ANY text, STUDY the product image attached.
+- The typography in the ad must feel like it was designed by the same team that designed the product packaging.
+- The headline should use the same serif/sans-serif classification as the product's brand name text.
+- Callout text should use a complementary clean font.
+- NEVER use a font that clashes with or feels disconnected from the product's visual identity.
+
+TYPOGRAPHY (CRITICAL — MUST match the product's brand identity):
+- LOOK AT THE ATTACHED PRODUCT IMAGE. Study the text/typography on the product packaging and label carefully.
+- ALL headline text in the ad MUST visually match the style, weight, and character of the fonts on the product packaging.
+- Specifically analyze:
+  * Is the product text serif or sans-serif? → Match that classification.
+  * Is it thin/light or heavy/bold? → Match that weight.
+  * Is it condensed/narrow or wide/extended? → Match that width.
+  * Is it rounded and friendly or sharp and angular? → Match that personality.
+  * What is the letter-spacing — tight, normal, or tracked out? → Match that spacing.
+- The headline font should feel like it BELONGS on the same shelf as the product packaging.
+- The body/callout font should be clean and readable, complementing the headline style.
+- DO NOT use a heavy, blocky, Impact-style sans-serif unless the product packaging uses that style.
+- DO NOT use a casual handwritten font unless the product packaging uses that style.
+- When in doubt: use a clean, modern, medium-weight sans-serif for callouts, and a refined serif or geometric sans for headlines — matched to the product's brand personality.
+
 OUTPUT: EXACTLY ${canvasSize} pixels. ${dimensions}.`;
 }
 
@@ -348,44 +370,53 @@ LAYOUT:
    - Dramatic, premium lighting
    - Natural shadow and grounding on the background environment
 
-4. FOUR BENEFIT CALLOUTS — Staggered around product
-   - LEFT SIDE (staggered vertically):
-     - Callout 1: Upper-left area
-     - Callout 2: Lower-left area
-   - RIGHT SIDE (staggered vertically):
-     - Callout 3: Upper-right area
-     - Callout 4: Lower-right area
-   
-   Each callout = ICON + TEXT + CURVED ARROW pointing to product:
-   - Icon: Small (14-18px), thin line style, relevant to the benefit
-   - Text: 2-4 words, clean and readable
-   - Arrow: Thin (1-2px), smooth curve toward product, small arrowhead
-   - Left callouts: text right-aligned, arrow curves right
-   - Right callouts: text left-aligned, arrow curves left
+4. FOUR BENEFIT CALLOUTS — Positioned around the product
+
+LAYOUT VARIANT BY ASPECT RATIO:
+- For 1:1 (square): Callouts staggered on LEFT and RIGHT sides of the product (2 left, 2 right)
+- For 9:16 (vertical/story): Callouts stacked VERTICALLY on one side (left), with product on the right. List-style layout — icon + text, stacked top to bottom.
+- For 4:5 (feed): Same as 1:1 — callouts on left and right of product.
+
+   Each callout = ICON + TEXT (no arrows needed):
 
    Callouts:
 ${calloutList}
 
-CALLOUT READABILITY (CRITICAL):
-- Each callout text must have a subtle semi-transparent backing pill/card behind it for readability
-  * Background: white at 70% opacity (on dark backgrounds) or dark at 70% opacity (on light backgrounds)
-  * Rounded corners, just enough to frame the icon + text
-  * This ensures callouts are readable even against busy or gradient backgrounds
-- Callout text must be at MINIMUM 18pt equivalent — readable on a phone screen
-- Icon + text + backing pill form a single visual unit
+CALLOUT PRESENTATION (UNIFORM STYLE):
+- Each of the 4 callouts must look IDENTICAL in presentation style:
+  * Icon positioned ABOVE or to the LEFT of the text (pick one and be consistent for all 4)
+  * Text is clean, bold, white or light color
+  * If background behind the callout area is dark or complex: add a very subtle text shadow (1px, 40% black) for readability. Do NOT add a box or pill behind the text.
+  * If background behind the callout area is light: use dark text with no shadow needed.
+- All 4 callouts must have the same layout, same font size, same icon size, same spacing.
+- The callouts should feel like a cohesive set — like 4 slides from the same deck.
+- NO mixed styles (don't put a box behind some callouts but not others).
+- Callout text size: readable on a mobile phone. Approximately 16-20pt equivalent.
+- NO arrows needed. The spatial positioning of callouts around the product makes the relationship clear.
 
-ICON STYLE:
-- Thin, elegant, modern line icons (like Lucide or Phosphor)
-- NOT filled, NOT emoji, NOT clip-art
-- Color matches callout text color
-- Category-aware: supplements→body/leaf/shield, skincare→droplet/sparkle, food→utensils/heart
+ICON RULES (CRITICAL — icons must look DESIGNED, not DRAWN):
+- Every icon must look like it was exported from a professional design system (Lucide, Phosphor, Heroicons)
+- Style: THIN LINE ICONS ONLY. 1.5-2px uniform stroke weight. No fills. No shading. No gradients in icons.
+- Shape: Simple geometric forms. Circles, lines, angles. Minimal detail.
+- Size: 28-36px. All icons EXACTLY the same size.
+- Color: White or light cream (on dark backgrounds) or dark charcoal (on light backgrounds). Matches callout text color.
+- DO NOT render icons that look hand-drawn, sketched, or illustrative
+- DO NOT use filled/solid icons
+- DO NOT add extra detail, shading, or 3D effects to icons
+- Each icon should be INSTANTLY recognizable at phone screen size
+- All 4 icons must have IDENTICAL visual style — same stroke weight, same level of detail, same visual complexity
 
-ARROW STYLE:
-- Thin (1-2px), smooth curved lines
-- Subtle, elegant — NOT thick or hand-drawn
-- Small arrowhead at product end
-
-TYPOGRAPHY: "${brand.headingFont}" for headlines, "${brand.bodyFont}" for callouts.
+ICON SELECTION BY KEYWORD:
+- For "energy" → simple lightning bolt (2 straight diagonal lines forming a zigzag)
+- For "brain/focus/cognitive" → simple circle with a few internal curved lines
+- For "heart/cardio" → simple heart outline
+- For "cellular/repair" → simple hexagon or cell-like circle
+- For "longevity/aging" → simple infinity symbol or hourglass outline
+- For "stress" → simple wavy line becoming straight (calm)
+- For "clean/natural" → simple leaf outline
+- For "shield/protect" → simple shield outline
+- For "gut/digestion" → simple stomach/organ outline
+- For general wellness → simple circle with plus sign
 
 WHAT NOT TO DO:
 - Do NOT make text blurry or AI-looking
