@@ -62,7 +62,7 @@ META ADS COMPLIANCE RULES (MANDATORY — every piece of copy must follow these):
   - "Cures [condition]" ✗ BANNED / "Treats [disease]" ✗ BANNED / "Proven to fix [problem]" ✗ BANNED
 - For comparison ads: Compare to CATEGORIES ("quick-fix detoxes", "cheap supplements"), never to specific named competitor brands
 
-Generate exactly 10 ad copy variations following these frameworks:
+Generate exactly 12 ad copy variations following these frameworks:
 
 **6 Features and Benefits Grid ads (type: "features_benefits"):**
 Each must include:
@@ -111,6 +111,20 @@ ${hasValidRating && hasValidReviews ? `**2 Review/Social proof style ads (type: 
 - rating: "${productData.rating}"` : `**2 Additional Features and Benefits ads:**
 - Since no reviews, create 2 more features_benefits type ads instead`}
 
+**2 Concept Creative ads (type: "concept"):**
+Surreal, cinematic, visual-metaphor-driven ads. The scene IS the hook.
+
+Each must include:
+- headline: 2-6 words, ALL CAPS, provocative/emotional. EXAMPLES: "RUNNING ON FUMES.", "NOT YOUR BEST NIGHT."
+- scene_description: 50-80 word SPECIFIC visual metaphor scene for the AI image generator. Cinematic, surreal, hyper-real.
+  EXAMPLES: "Rusty vintage gas pump in dark rain-soaked station, one pump leaks neon green 'QUICK FIX', the other flows deep red beet juice. Product centered between pumps." / "Giant melting gummy bear dripping Red 40 dye, product next to it surrounded by fresh vegetables." / "Cracked gold trophy labeled 'BEST PERFORMANCE', product emerging from the crack, hero-lit."
+  Scene MUST relate to the product's benefits or problem/solution.
+- education_copy: 1-2 lines benefit text below headline, max 15 words.
+- footer_copy: Short tagline, max 5 words. Can be empty string.
+- badge_pills: Array of 2-3 short pills, each 1-3 words. E.g. ["STIMULANT FREE", "DAILY DROPS"]
+
+CRITICAL: Scene must be VISUALLY STUNNING, metaphorically connected to the product, product appears as HERO. NEVER just "product on a background."
+
 Respond ONLY with a valid JSON array. Example format:
 
 [
@@ -130,7 +144,7 @@ Respond ONLY with a valid JSON array. Example format:
     "type": "comparison",
     "comparisonPoints": {
       "ours": ["✓ 12 ancient botanicals", "✓ Works in 7 days", "✓ Zero crash energy", "✓ No synthetic fillers"],
-      "theirs": ["✗ Synthetic fillers you can't pronounce", "✗ Wears off by noon", "✗ That weird aftertaste", "✗ Hidden proprietary blends"]
+      "theirs": ["✗ Synthetic fillers", "✗ Wears off by noon", "✗ Weird aftertaste", "✗ Hidden blends"]
     }
   }${hasValidRating && hasValidReviews ? `,
   {
@@ -139,7 +153,15 @@ Respond ONLY with a valid JSON array. Example format:
     "type": "review",
     "reviewCount": "${productData.reviewCount}",
     "rating": "${productData.rating}"
-  }` : ''}
+  }` : ''},
+  {
+    "headline": "RUNNING ON FUMES.",
+    "scene_description": "Hyper-real cinematic: rusty vintage gas meter reading EMPTY with red backlight on weathered metal surface. Product bottle next to meter as refuel source. Dark moody studio, red spotlights, rain droplets on metal.",
+    "education_copy": "Plant-based stamina + vitality support\\ndaily beet extract drops",
+    "footer_copy": "plant-based daily drops",
+    "badge_pills": ["STIMULANT FREE", "DAILY DROPS", "BEET EXTRACT"],
+    "type": "concept"
+  }
 ]`;
 
     console.log('Generating ad copy for:', productData.title);
@@ -195,6 +217,13 @@ Respond ONLY with a valid JSON array. Example format:
             headline: copy.headline_primary || copy.headline || 'Premium Quality',
             subheadline: copy.subheadline_primary || copy.subheadline,
             bulletPoints: copy.feature_benefits?.map((fb: any) => fb.text) || []
+          };
+        }
+        if (copy.type === 'concept') {
+          return {
+            ...copy,
+            headline: copy.headline || 'Concept Creative',
+            bulletPoints: copy.badge_pills || []
           };
         }
         return copy;

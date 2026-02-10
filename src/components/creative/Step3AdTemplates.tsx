@@ -18,7 +18,7 @@ interface Step3Props {
 }
 
 interface UnifiedTemplateCardProps {
-  templateType: 'features_benefits' | 'comparison' | 'review' | 'benefits';
+  templateType: 'features_benefits' | 'comparison' | 'review' | 'benefits' | 'concept';
   title: string;
   description: string;
   adCopies: AdCopy[];
@@ -56,6 +56,7 @@ function UnifiedTemplateCard({
         if (templateType === 'benefits') return copy.type === 'benefit' || copy.type === 'features_benefits';
         if (templateType === 'comparison') return copy.type === 'comparison';
         if (templateType === 'review') return copy.type === 'review';
+        if (templateType === 'concept') return copy.type === 'concept';
         return false;
       })
     : [];
@@ -274,6 +275,11 @@ function UnifiedTemplateCard({
                       {copy.type === 'review' && copy.rating && (
                         <span className="text-xs text-accent">★ {copy.rating} · {copy.reviewCount}+ reviews</span>
                       )}
+                      {copy.type === 'concept' && copy.scene_description && (
+                        <span className="text-xs text-muted-foreground italic line-clamp-2">
+                          🎬 {copy.scene_description}
+                        </span>
+                      )}
                     </div>
                   </SelectItem>
                 ))}
@@ -309,6 +315,7 @@ export function Step3AdTemplates({ adCopies, generatedCreatives, onGenerateCreat
   const hasReviews = Array.isArray(adCopies) && adCopies.some(copy => copy.type === 'review');
   const hasComparison = Array.isArray(adCopies) && adCopies.some(copy => copy.type === 'comparison');
   const hasBenefits = Array.isArray(adCopies) && adCopies.some(copy => copy.type === 'benefit' || copy.type === 'features_benefits');
+  const hasConcept = Array.isArray(adCopies) && adCopies.some(copy => copy.type === 'concept');
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -323,6 +330,7 @@ export function Step3AdTemplates({ adCopies, generatedCreatives, onGenerateCreat
       <UnifiedTemplateCard templateType="comparison" title="Us vs Them" description="Side-by-side comparison highlighting your advantages" adCopies={adCopies} onGenerate={onGenerateCreative} generatedCreatives={generatedCreatives} disabled={!hasComparison} disabledReason="No comparison data generated" globalProductImage={productImageBase64} />
       <UnifiedTemplateCard templateType="review" title="Customer Review" description="Build trust with social proof and customer testimonials" adCopies={adCopies} onGenerate={onGenerateCreative} generatedCreatives={generatedCreatives} disabled={!hasReviews} disabledReason="No reviews found on the product page" globalProductImage={productImageBase64} />
       <UnifiedTemplateCard templateType="benefits" title="Pure Benefits" description="Focus purely on product benefits with clean layout" adCopies={adCopies} onGenerate={onGenerateCreative} generatedCreatives={generatedCreatives} disabled={!hasBenefits} disabledReason="No benefit copy generated" globalProductImage={productImageBase64} />
+      <UnifiedTemplateCard templateType="concept" title="Concept Creative" description="Surreal cinematic ads with visual metaphors — scroll-stopping, provocative, unique" adCopies={adCopies} onGenerate={onGenerateCreative} generatedCreatives={generatedCreatives} disabled={!hasConcept} disabledReason="No concept copy generated" globalProductImage={productImageBase64} />
 
       <div className="pt-4">
         <Button variant="outline" onClick={onPrev} className="h-11 px-6 rounded-xl font-medium">
