@@ -16,11 +16,9 @@ export function CreativeGenerator() {
     adCopies,
     generatedCreatives,
     productImageBase64,
-    productCutoutBase64,
     productColors,
     confirmedBrandKit,
     isAnalyzingImage,
-    studioProductImage,
     detectedFonts,
     scanShopifyUrl,
     analyzeProductImage,
@@ -64,7 +62,7 @@ export function CreativeGenerator() {
         </div>
 
         {/* Step Indicator */}
-        <StepIndicator currentStep={step} totalSteps={4} />
+        <StepIndicator currentStep={step} />
 
         {/* Step Content */}
         <div className="mt-8">
@@ -83,7 +81,6 @@ export function CreativeGenerator() {
               isLoading={isAnalyzingImage}
               productColors={productColors}
               productImageBase64={productImageBase64}
-              productCutoutBase64={productCutoutBase64}
               onAnalyze={analyzeProductImage}
               onNext={() => nextStep()}
               onPrev={prevStep}
@@ -118,6 +115,7 @@ export function CreativeGenerator() {
               onGenerateCreative={generateCreative}
               onPrev={prevStep}
               productImageBase64={confirmedBrandKit?.productImageBase64 || productImageBase64}
+              loadingStage={loadingStage}
             />
           )}
         </div>
