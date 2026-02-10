@@ -222,6 +222,20 @@ interface BrandValues { bgColor: string; textColor: string; accentColor: string;
 function buildCoreCreativeDirection(brand: BrandValues, canvasSize: string, dimensions: string): string {
   return `YOU ARE A SENIOR ART DIRECTOR designing a scroll-stopping Meta ad. This must look like a real ad from a $100M DTC brand — NOT like an AI template fill.
 
+QUALITY BENCHMARK:
+- This ad must look like it was designed by a senior designer at a $500M DTC brand
+- Think editorial, magazine-quality, poster-grade production value
+- SIMPLE > BUSY. If in doubt, remove elements. Less clutter = more professional.
+- The PRODUCT and HEADLINE are the only two things that matter. Everything else supports them.
+- Background should enhance, not compete with, the product
+- If the output looks "busy" or "cluttered" — it's wrong. Simplify.
+
+FULL-BLEED OUTPUT (MANDATORY):
+- The image must be a FULL-BLEED poster with NO borders, NO frames, NO rounded corners, NO card edges, NO drop shadows around the edge.
+- Content should extend to ALL edges of the canvas — background goes edge-to-edge.
+- This is a standalone Meta ad image, not a card inside a UI. No visible container.
+- If there is any white border, black border, or frame visible around the output: REGENERATE.
+
 CREATIVE DIRECTION:
 - This is a POSTER-STYLE PRODUCT ADVERTISEMENT, not a catalog photo
 - The product is the HERO — it should feel dramatic, premium, owning the frame
@@ -231,12 +245,22 @@ BACKGROUND PHILOSOPHY (CRITICAL — THIS IS WHAT MAKES OR BREAKS THE AD):
 - NEVER use a flat, single-color background. That looks cheap and AI-generated.
 - The background should be a RICH, CONTEXTUAL ENVIRONMENT that matches the product's brand story.
 - Choose ONE of these background approaches based on the product category:
-  * SURREAL INGREDIENT WORLD: Floating botanicals, herbs, fruits, or raw ingredients relevant to the product, softly blurred behind the product with dramatic depth of field. (Best for: supplements, food, wellness)
-  * BOLD GRADIENT WASH: Rich, moody gradient using the brand's color palette — think dramatic lighting, color transitions, maybe a subtle texture overlay. (Best for: beauty, skincare, modern brands)
+  * BOLD GRADIENT WASH (PREFERRED — most reliable, most professional): Rich, moody gradient using the brand's color palette — warm to cool transition, or light to dark. Subtle texture overlay (paper grain, linen, soft noise). Soft warm bokeh or light orbs. These approaches ALWAYS look more professional than attempting photorealistic ingredients.
   * LIFESTYLE TEXTURE: A real-world surface like marble, terracotta, linen, dark wood, or concrete that matches the brand's aesthetic. Product sits on it with real shadow. (Best for: premium products, artisanal brands)
   * DRAMATIC STUDIO: Deep black or very dark moody background with a single dramatic spotlight on the product. High contrast, editorial feel. (Best for: bold/masculine brands, nighttime products)
+  * SURREAL INGREDIENT WORLD: Only if gradient/texture won't work. Floating botanicals softly blurred behind the product. (Best for: supplements, food, wellness)
 - The background should use brand colors (${brand.bgColor}) as a TONAL GUIDE, not as a literal flat fill.
 - Background must have DEPTH — layers, blur, gradient, texture. Never flat.
+
+BACKGROUND REALISM RULE (CRITICAL):
+- If the background includes ingredient elements (fruits, herbs, botanicals), they MUST be:
+  * Subtly OUT OF FOCUS with bokeh blur — never sharp and in-focus like the product
+  * De-saturated slightly compared to the product — the product is the color hero, not the background elements
+  * Scattered LOOSELY and ORGANICALLY — not arranged symmetrically or floating in a grid
+  * Partially cropped at the edges of the frame (some elements only half-visible)
+  * SMALL relative to the product — ingredient elements should be 10-20% of product size max
+- NEVER render background elements with the same sharpness, saturation, or focus as the product. The product must be the ONLY sharp, crisp element.
+- If in doubt, use a GRADIENT or TEXTURED background instead of ingredient elements. A rich warm gradient with subtle light always looks more professional than AI-rendered fruit.
 
 PRODUCT INTEGRATION:
 - The attached image is the product. Integrate it as the HERO.
@@ -315,6 +339,14 @@ LAYOUT:
 
    Callouts:
 ${calloutList}
+
+CALLOUT READABILITY (CRITICAL):
+- Each callout text must have a subtle semi-transparent backing pill/card behind it for readability
+  * Background: white at 70% opacity (on dark backgrounds) or dark at 70% opacity (on light backgrounds)
+  * Rounded corners, just enough to frame the icon + text
+  * This ensures callouts are readable even against busy or gradient backgrounds
+- Callout text must be at MINIMUM 18pt equivalent — readable on a phone screen
+- Icon + text + backing pill form a single visual unit
 
 ICON STYLE:
 - Thin, elegant, modern line icons (like Lucide or Phosphor)
@@ -452,6 +484,12 @@ ${theirsPoints}
    - Product is the hero of the winning side
    - Angled slightly (~5-10° tilt) to add dynamism
    - Dramatic product lighting, premium feel
+
+TEXT LENGTH RULE FOR COMPARISON POINTS:
+- Each comparison point must be MAXIMUM 4 WORDS rendered in the image
+- If the provided text is longer, use only the first 3-4 words or rephrase to be shorter
+- Short = readable at phone size = better ad performance
+- Example: "Activates AMPK for cellular repair" → render as "Cellular Repair"
 
 DESIGN ENERGY: Think debate stage, confident brand, "the choice is obvious" energy
 - Strong vertical divider between columns (can be subtle gradient fade or clean line)
