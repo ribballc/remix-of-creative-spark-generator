@@ -26,6 +26,7 @@ serve(async (req) => {
     // Only include review info if there are actual reviews
     const reviewCountRaw = (productData.reviewCount || '0').replace(/[^0-9]/g, '');
     const reviewCountNum = parseInt(reviewCountRaw);
+    const formattedReviewCount = reviewCountNum.toLocaleString('en-US');
     const hasValidReviews = reviewCountNum > 0;
     const hasEnoughReviews = reviewCountNum >= 500;
     
@@ -103,7 +104,7 @@ ${hasValidRating && hasValidReviews ? `**2 Review/Social proof style ads (type: 
   - BAD: "Great product would recommend" / "This changed my life" / "Amazing results" (too generic, sounds fake)
   - CRITICAL: Must end at a natural sentence break. Never cut off mid-thought.
 - subheadline: Rating line. CRITICAL RULES:
-  ${hasEnoughReviews ? `- Show "Rated ${productData.rating}/5 by ${productData.reviewCount}+ customers"` : `- Show ONLY the star rating like "★★★★★ ${productData.rating}/5" — do NOT show review count under 500`}
+  ${hasEnoughReviews ? `- Show "Rated ${productData.rating}/5 by ${formattedReviewCount}+ customers"` : `- Show ONLY the star rating like "★★★★★ ${productData.rating}/5" — do NOT show review count under 500`}
   - NEVER invent or inflate review counts
 - reviewCount: "${productData.reviewCount}"
 - rating: "${productData.rating}"` : `**2 Additional Features and Benefits ads:**
