@@ -232,123 +232,26 @@ function buildPromptForTemplate(
 interface BrandValues { bgColor: string; textColor: string; accentColor: string; ctaColor: string; headingFont: string; bodyFont: string; }
 
 function buildCoreCreativeDirection(brand: BrandValues, canvasSize: string, dimensions: string): string {
-  return `YOU ARE A SENIOR ART DIRECTOR designing a scroll-stopping Meta ad. This must look like a real ad from a $100M DTC brand — NOT like an AI template fill.
+  return `SENIOR ART DIRECTOR brief: scroll-stopping Meta ad for a $100M DTC brand. Magazine-quality, editorial, poster-grade.
 
-QUALITY BENCHMARK:
-- This ad must look like it was designed by a senior designer at a $500M DTC brand
-- Think editorial, magazine-quality, poster-grade production value
-- SIMPLE > BUSY. If in doubt, remove elements. Less clutter = more professional.
-- The PRODUCT and HEADLINE are the only two things that matter. Everything else supports them.
-- Background should enhance, not compete with, the product
-- If the output looks "busy" or "cluttered" — it's wrong. Simplify.
+CANVAS: EXACTLY ${canvasSize} pixels (${dimensions}). FULL-BLEED — NO borders, frames, rounded corners, or card edges.
 
-FULL-BLEED OUTPUT (MANDATORY):
-- The image must be a FULL-BLEED poster with NO borders, NO frames, NO rounded corners, NO card edges, NO drop shadows around the edge.
-- Content should extend to ALL edges of the canvas — background goes edge-to-edge.
-- This is a standalone Meta ad image, not a card inside a UI. No visible container.
-- If there is any white border, black border, or frame visible around the output: REGENERATE.
+PRODUCT: The attached image is the HERO. 40-55% of canvas. Dramatic directional lighting. Preserve packaging exactly. Natural grounding shadow.
 
-CREATIVE DIRECTION:
-- This is a POSTER-STYLE PRODUCT ADVERTISEMENT, not a catalog photo
-- The product is the HERO — it should feel dramatic, premium, owning the frame
-- The overall energy should make someone STOP SCROLLING and actually look
-
-BACKGROUND PHILOSOPHY (CRITICAL — THIS IS WHAT MAKES OR BREAKS THE AD):
-- NEVER use a flat, single-color background. That looks cheap and AI-generated.
-- The background should be a RICH, CONTEXTUAL ENVIRONMENT that matches the product's brand story.
-- Choose ONE of these background approaches based on the product category:
-  * BOLD GRADIENT WASH (PREFERRED — most reliable, most professional): Rich, moody gradient using the brand's color palette — warm to cool transition, or light to dark. Subtle texture overlay (paper grain, linen, soft noise). Soft warm bokeh or light orbs. These approaches ALWAYS look more professional than attempting photorealistic ingredients.
-  * LIFESTYLE TEXTURE: A real-world surface like marble, terracotta, linen, dark wood, or concrete that matches the brand's aesthetic. Product sits on it with real shadow. (Best for: premium products, artisanal brands)
-  * DRAMATIC STUDIO: Deep black or very dark moody background with a single dramatic spotlight on the product. High contrast, editorial feel. (Best for: bold/masculine brands, nighttime products)
-  * SURREAL INGREDIENT WORLD: Only if gradient/texture won't work. Floating botanicals softly blurred behind the product. (Best for: supplements, food, wellness)
-- The background should use brand colors (${brand.bgColor}) as a TONAL GUIDE, not as a literal flat fill.
-- Background must have DEPTH — layers, blur, gradient, texture. Never flat.
-
-BACKGROUND REALISM RULE (CRITICAL):
-- If the background includes ingredient elements (fruits, herbs, botanicals), they MUST be:
-  * Subtly OUT OF FOCUS with bokeh blur — never sharp and in-focus like the product
-  * De-saturated slightly compared to the product — the product is the color hero, not the background elements
-  * Scattered LOOSELY and ORGANICALLY — not arranged symmetrically or floating in a grid
-  * Partially cropped at the edges of the frame (some elements only half-visible)
-  * SMALL relative to the product — ingredient elements should be 10-20% of product size max
-- NEVER render background elements with the same sharpness, saturation, or focus as the product. The product must be the ONLY sharp, crisp element.
-- If in doubt, use a GRADIENT or TEXTURED background instead of ingredient elements. A rich warm gradient with subtle light always looks more professional than AI-rendered fruit.
-
-PRODUCT INTEGRATION:
-- The attached image is the product. Integrate it as the HERO.
-- Product should feel LARGER THAN LIFE — taking up 40-55% of the canvas.
-- Use dramatic, directional lighting (key light from upper-left, subtle rim light)
-- Natural grounding shadow OR floating with soft glow underneath
-- Preserve the product EXACTLY as provided — do not alter, redraw, or stylize the label/packaging.
-- Do NOT add other products or objects unless they are relevant ingredient elements in the background.
+BACKGROUND: NEVER flat single-color. Use ONE of: (1) Rich gradient wash with brand colors + subtle texture (PREFERRED), (2) Lifestyle texture (marble, wood, linen), (3) Dramatic dark studio spotlight, (4) Soft blurred botanicals. Brand color ${brand.bgColor} as tonal guide. Must have DEPTH.
+- Any ingredient elements: OUT OF FOCUS, desaturated vs product, loosely scattered, partially cropped, 10-20% of product size max.
 
 TEXT RULES:
-- ALL text must be CRISP, SHARP, and clearly readable at mobile phone size
-- Headline: BOLD, LARGE — this is the scroll-stopper. Should dominate the top 25-30% of canvas.
-- Use high contrast: light text on dark, dark text on light. Always.
-- Text color: ${brand.textColor}. Accent color: ${brand.accentColor}.
-- ALL text HORIZONTALLY CENTERED on the canvas.
+- ALL text CRISP, SHARP, readable at phone size. Horizontally centered.
+- Headlines: BOLD, LARGE, standalone on background — NEVER inside a box/banner/pill/container.
+- Text shadow (2px, rgba(0,0,0,0.4)) on all text over gradients.
+- CONTRAST: White/cream on dark backgrounds. Black/charcoal on light. NEVER use accent color (orange/gold/amber) as text on warm backgrounds.
+- Numbers ≥1000 must have commas (10,000 not 10000).
 
-HEADLINE STYLE (APPLIES TO ALL TEMPLATES):
-- Headlines are NEVER inside a box, banner, pill, rectangle, or any container shape.
-- Headlines are ALWAYS rendered as clean, bold, standalone text directly on the background.
-- Use text shadow (subtle, 2px, dark) for readability on busy or gradient backgrounds.
-- The review template headline style is the reference: bold serif or sans-serif text, large, floating cleanly on a rich background with no UI elements around it.
-- This rule also applies to subheadlines — no containers, no pills, no boxes.
+TYPOGRAPHY: Study the product packaging. Match its serif/sans-serif, weight, width, and letter-spacing for headlines. Body text: clean complementary font. All templates for same product = same type style.
+- Font "${brand.headingFont}": if descriptive (e.g. "Match product packaging", "Elegant serif"), interpret the style visually.
 
-NUMBER FORMATTING (MANDATORY):
-- ALL numbers 1,000 or greater MUST include commas (e.g., 1,000 — 10,000 — 100,000 — 1,000,000).
-- NEVER render a number like "10000" or "1000" without a comma. Always "10,000" and "1,000".
-- This applies to review counts, customer counts, dosages, and any numeric text in the ad.
-
-BRAND TYPOGRAPHY MATCHING (APPLIES TO ALL TEXT):
-- Before rendering ANY text, STUDY the product image attached.
-- The typography in the ad must feel like it was designed by the same team that designed the product packaging.
-- The headline should use the same serif/sans-serif classification as the product's brand name text.
-- Callout text should use a complementary clean font.
-- NEVER use a font that clashes with or feels disconnected from the product's visual identity.
-
-TEXT CONTRAST (MANDATORY — ZERO EXCEPTIONS):
-- ALL headline text must be WHITE or CREAM on dark/medium backgrounds.
-- ALL headline text must be BLACK or DARK CHARCOAL on light backgrounds.
-- NEVER use brand accent color (orange, gold, amber, teal, etc.) as headline text color if the background is a similar warm/dark tone. This creates low contrast and the text disappears.
-- SPECIFICALLY: If the background is dark brown, deep amber, dark red, or warm dark tones → headline MUST be white/cream. NOT orange, NOT gold, NOT amber.
-- The test: squint at the image. If any text blends into the background, it FAILS. Fix it by switching to white or black.
-- This applies to: headlines, subheadlines, callouts, rating text, star ratings, comparison points.
-- If the brand's text color would be unreadable against the chosen background, OVERRIDE it with white or black. Readability > brand color.
-- Add subtle text shadow (2px, rgba(0,0,0,0.4)) on ALL text when background is a gradient or has any complexity.
-
-LAYOUT OVERFLOW PREVENTION:
-- ALL text elements must fit within their designated zones with comfortable padding (minimum 40px from any edge).
-- NO text should wrap into areas occupied by the product image.
-- NO text should extend below the product's base/shadow area unless that space is clearly designated for it.
-- If there are more copy points than can fit cleanly in the layout, REDUCE the font size or DROP the lowest-priority point. Never cram.
-- Callout points on the features_benefits template: maximum 4 points. If they don't fit around the product, use 3.
-- The product image is sacred space — nothing overlaps it except intentional design elements like the brand's own packaging text.
-
-TYPOGRAPHY (CRITICAL — must match brand identity):
-- STUDY the product image. The typography on the product packaging is the source of truth.
-- ALL headline text must visually match the font STYLE on the product packaging:
-  * Serif or sans-serif? → Match it.
-  * Light/medium/bold weight? → Match it.
-  * Condensed or normal width? → Match it.
-  * Rounded or sharp? → Match it.
-  * Letter-spacing tight, normal, or wide? → Match it.
-
-FONT VALUE INTERPRETATION:
-- If font = specific name (e.g., "Poppins"): Render closest visual match.
-- If font = "Match product packaging": Replicate the exact typographic style from the product image.
-- If font = "Modern geometric sans-serif": Style like Poppins, DM Sans, Montserrat.
-- If font = "Elegant serif": Style like Playfair Display, Cormorant, Lora.
-- If font = "Bold condensed sans-serif": Style like Oswald, Barlow Condensed.
-- If font = "Clean minimal sans-serif": Style like Inter, Helvetica Neue.
-- If font = "Clean sans-serif": Neutral, readable sans-serif for small text.
-
-CROSS-TEMPLATE CONSISTENCY:
-- ALL ad templates for the same product must use the SAME typographic style.
-- The review ad, features ad, and comparison ad should look like they came from the same brand's design system.
-
-OUTPUT: EXACTLY ${canvasSize} pixels. ${dimensions}.`;
+LAYOUT: 40px min padding from edges. No text overlapping product. Max 4 callout points — use 3 if space is tight.`;
 }
 
 function buildFeaturesBenefitsPrompt(adCopy: AdCopyInput, aspectRatio: string, canvasSize: string, dimensions: string, brand: BrandValues): string {
@@ -364,97 +267,27 @@ function buildFeaturesBenefitsPrompt(adCopy: AdCopyInput, aspectRatio: string, c
 
   const coreDirection = buildCoreCreativeDirection(brand, canvasSize, dimensions);
 
-  return `Generate a scroll-stopping ${aspectRatio} Features & Benefits product poster for Meta ads.
+  return `Generate a ${aspectRatio} Features & Benefits product poster for Meta ads.
 
 ${coreDirection}
 
-THIS IS A PRODUCT POSTER — bold, in-your-face, designed to make someone stop scrolling in under 0.5 seconds.
-
 LAYOUT:
+1. HEADLINE (top 12-18%): "${headline}" — MASSIVE bold text, max 2 lines, centered. White/cream on dark, black on light. NEVER orange/gold on warm backgrounds. Subtle text shadow.
 
-1. HEADLINE — TOP OF CANVAS
-   - Text: "${headline}"
-   - NO box, NO banner, NO pill shape, NO rounded rectangle behind the text
-   - Render as BOLD, LARGE standalone text directly on the background
-   - Text color: WHITE or CREAM on dark/warm backgrounds (amber, brown, etc.). BLACK or DARK CHARCOAL on light backgrounds. NEVER orange, gold, or amber on warm backgrounds.
-   - Add a subtle text shadow (2px, 50% opacity black) for readability on complex backgrounds
+2. SUBHEADLINE (below headline): "${subheadline}" — smaller, lighter weight, clean text, no container. 80% opacity of headline color.
 
-FEATURES/BENEFITS HEADLINE COLOR:
-- If the background is a warm gradient (amber, brown, red, orange tones): headline MUST be WHITE or CREAM. Never orange or gold.
-- If the background is cool/dark (navy, black, dark green): headline MUST be WHITE.
-- If the background is light (beige, white, cream): headline MUST be BLACK or DARK CHARCOAL.
-- The headline is the most important text element. It must POP against the background with maximum contrast.
-   - TEXT MUST BE MASSIVE — this is the scroll-stopper
-   - Max 2 lines. Takes up top 12-18% of canvas.
-   - Centered horizontally
+3. PRODUCT (center): Attached image, 45-55% canvas width, dramatic lighting, grounded.
 
-2. SUBHEADLINE — Directly below headline
-   - Text: "${subheadline}"
-   - NO pill shape, NO box, NO container behind the text
-   - Render as clean text, slightly smaller and lighter weight than headline
-   - Same color as headline or slightly reduced opacity (80%)
-   - Single line, centered horizontally
+4. FOUR BENEFIT CALLOUTS around product:
+${aspectRatio === '9:16' ? '   Stacked VERTICALLY on LEFT, product on RIGHT.' : '   Staggered: 2 LEFT, 2 RIGHT of product.'}
 
-3. PRODUCT — CENTER HERO
-   - Place the attached product image CENTER STAGE
-   - Product should be LARGE — 45-55% of canvas width
-   - Dramatic, premium lighting
-   - Natural shadow and grounding on the background environment
-
-4. FOUR BENEFIT CALLOUTS — Positioned around the product
-
-LAYOUT VARIANT BY ASPECT RATIO:
-- For 1:1 (square): Callouts staggered on LEFT and RIGHT sides of the product (2 left, 2 right)
-- For 9:16 (vertical/story): Callouts stacked VERTICALLY on one side (left), with product on the right. List-style layout — icon + text, stacked top to bottom.
-- For 4:5 (feed): Same as 1:1 — callouts on left and right of product.
-
-   Each callout = ICON + TEXT (no arrows needed):
-
-   Callouts:
 ${calloutList}
 
-CALLOUT PRESENTATION (UNIFORM STYLE):
-- Each of the 4 callouts must look IDENTICAL in presentation style:
-  * Icon positioned ABOVE or to the LEFT of the text (pick one and be consistent for all 4)
-  * Text is clean, bold, white or light color
-  * If background behind the callout area is dark or complex: add a very subtle text shadow (1px, 40% black) for readability. Do NOT add a box or pill behind the text.
-  * If background behind the callout area is light: use dark text with no shadow needed.
-- All 4 callouts must have the same layout, same font size, same icon size, same spacing.
-- The callouts should feel like a cohesive set — like 4 slides from the same deck.
-- NO mixed styles (don't put a box behind some callouts but not others).
-- Callout text size: readable on a mobile phone. Approximately 16-20pt equivalent.
-- NO arrows needed. The spatial positioning of callouts around the product makes the relationship clear.
+   Style: Icon ABOVE or LEFT of text (consistent for all 4). Thin line icons only (1.5-2px stroke, no fills, geometric, 28-36px, uniform). Text: bold, white on dark / dark on light. Subtle text shadow if needed, NO boxes/pills. All 4 identical in style, size, spacing.
 
-ICON RULES (CRITICAL — icons must look DESIGNED, not DRAWN):
-- Every icon must look like it was exported from a professional design system (Lucide, Phosphor, Heroicons)
-- Style: THIN LINE ICONS ONLY. 1.5-2px uniform stroke weight. No fills. No shading. No gradients in icons.
-- Shape: Simple geometric forms. Circles, lines, angles. Minimal detail.
-- Size: 28-36px. All icons EXACTLY the same size.
-- Color: White or light cream (on dark backgrounds) or dark charcoal (on light backgrounds). Matches callout text color.
-- DO NOT render icons that look hand-drawn, sketched, or illustrative
-- DO NOT use filled/solid icons
-- DO NOT add extra detail, shading, or 3D effects to icons
-- Each icon should be INSTANTLY recognizable at phone screen size
-- All 4 icons must have IDENTICAL visual style — same stroke weight, same level of detail, same visual complexity
+   Icon guide: energy→zigzag bolt, brain/focus→circle+curves, heart→heart outline, cellular→hexagon, longevity→infinity, natural→leaf, shield→shield outline, gut→organ outline.
 
-ICON SELECTION BY KEYWORD:
-- For "energy" → simple lightning bolt (2 straight diagonal lines forming a zigzag)
-- For "brain/focus/cognitive" → simple circle with a few internal curved lines
-- For "heart/cardio" → simple heart outline
-- For "cellular/repair" → simple hexagon or cell-like circle
-- For "longevity/aging" → simple infinity symbol or hourglass outline
-- For "stress" → simple wavy line becoming straight (calm)
-- For "clean/natural" → simple leaf outline
-- For "shield/protect" → simple shield outline
-- For "gut/digestion" → simple stomach/organ outline
-- For general wellness → simple circle with plus sign
-
-WHAT NOT TO DO:
-- Do NOT make text blurry or AI-looking
-- Do NOT use thick hand-drawn arrows
-- Do NOT put product on a flat single-color background with no depth
-- Do NOT make the headline small
-- Do NOT add elements not specified above
+   NO arrows. NO hand-drawn/sketched icons.
 
 OUTPUT: EXACTLY ${canvasSize} pixels. ${dimensions}.`;
 }
@@ -469,7 +302,6 @@ function buildReviewPrompt(adCopy: AdCopyInput, aspectRatio: string, canvasSize:
     ? `Rated ${actualRating}/5 by ${formattedReviewCount}+ customers`
     : adCopy.subheadline || `★★★★★ ${actualRating}/5`;
 
-  // Ensure headline is complete
   const words = adCopy.headline.split(' ');
   let headline = words.slice(0, 12).join(' ');
   const incompleteEndings = ['and', 'but', 'or', 'the', 'a', 'an', 'to', 'for', 'with', 'in', 'on', 'at', 'of', 'my', 'so', 'that', 'is', 'was'];
@@ -478,58 +310,22 @@ function buildReviewPrompt(adCopy: AdCopyInput, aspectRatio: string, canvasSize:
 
   const coreDirection = buildCoreCreativeDirection(brand, canvasSize, dimensions);
 
-  return `Generate a premium, editorial-style ${aspectRatio} customer testimonial Meta ad.
+  return `Generate a premium ${aspectRatio} customer testimonial Meta ad.
 
 ${coreDirection}
 
-THIS IS A SOCIAL PROOF AD — it should feel like an authentic customer endorsement on a premium brand's Instagram.
-
 LAYOUT:
+1. FIVE STARS (top 8%): 5 small elegant gold (#D4A853) filled stars, centered.
 
-1. FIVE STARS — Top of canvas
-   - 5 small, elegant filled stars in a horizontal row
-   - Color: Gold (#D4A853) or brand accent color
-   - Centered horizontally, positioned in top 8% of canvas
-   - Small and tasteful — NOT oversized
+2. TESTIMONIAL (upper 20-40%): "${headline}" — in quotation marks, LARGE bold serif/sans-serif, max 3 lines, centered. Color: ${brand.textColor}. Magazine pull-quote feel.
 
-2. TESTIMONIAL QUOTE — The HERO text element
-   - Text: "${headline}"
-   - In quotation marks ("..." style, elegant)
-   - LARGE, bold, commanding serif or bold sans-serif
-   - MAX 3 LINES. If text is too long, reduce font size to fit in 3 lines.
-   - Centered horizontally, positioned in upper 20-40% of canvas
-   - Color: ${brand.textColor}, bold weight
-   - This should feel like a pull-quote from a magazine
-   - Font: "${brand.headingFont}" or clean serif like Playfair Display
+3. RATING LINE (below quote): "${ratingLine}" — smaller, lighter, 60% opacity, centered.
 
-3. RATING LINE — Below the quote
-   - Text: "${ratingLine}"
-   - Smaller, lighter weight, understated
-   - Single line, centered
-   - Color: ${brand.textColor} at 60% opacity
+4. PRODUCT (lower half): Attached image, ~45% canvas width, dramatic lighting, grounded.
 
-4. PRODUCT — Lower half of canvas, centered
-   - Product from attached image, LARGE and commanding
-   - Professional lighting, dramatic but clean
-   - Natural grounding or floating with soft shadow
-   - Product takes up ~45% of canvas width
+BACKGROUND: Rich warm gradient (tonal: ${brand.bgColor}), subtle texture/depth. NOT flat.
 
-BACKGROUND:
-- Rich, warm gradient using brand palette (tonal guide: ${brand.bgColor})
-- NOT a flat single color
-- Subtle texture or depth — could be a soft radial gradient, fabric-like texture, or warm bokeh
-- Should feel premium, editorial, magazine-quality
-
-CRITICAL DATA ACCURACY:
-- The star rating is ${actualRating} out of 5. MUST appear exactly as "${actualRating}/5" if shown.
-- Do NOT change, invent, or hallucinate any rating number.
-- If the rating line says "1/5" that is WRONG. Use ${actualRating}/5.
-
-WHAT NOT TO DO:
-- Do NOT change the rating number — it MUST be ${actualRating}/5
-- Do NOT make text blurry
-- Do NOT add busy decorative elements
-- Do NOT make the quote text small — it's the hero element
+CRITICAL: Star rating MUST be ${actualRating}/5. Do NOT invent or change this number.
 
 OUTPUT: EXACTLY ${canvasSize} pixels. ${dimensions}.`;
 }
@@ -540,70 +336,23 @@ function buildComparisonPrompt(adCopy: AdCopyInput, aspectRatio: string, canvasS
 
   const coreDirection = buildCoreCreativeDirection(brand, canvasSize, dimensions);
 
-  return `Generate a BOLD, high-impact ${aspectRatio} "Us vs Them" comparison Meta ad.
+  return `Generate a BOLD ${aspectRatio} "Us vs Them" comparison Meta ad. Opinionated, confident.
 
 ${coreDirection}
 
-THIS IS A DEBATE AD — IT PICKS A FIGHT. The design should feel OPINIONATED and CONFIDENT.
-
 LAYOUT:
+1. HEADLINE (top 15-20%): "${adCopy.headline}" — MASSIVE bold text, centered, no box/banner. White on dark, dark on light. Text shadow for readability.
 
-1. HEADLINE — Full width across top
-   - Text: "${adCopy.headline}"
-   - NO banner, NO bar, NO box, NO colored rectangle behind the text
-   - MASSIVE bold text rendered directly on the background
-   - Text color: White or cream (on dark backgrounds) OR dark charcoal/black (on light backgrounds)
-   - Add subtle text shadow for readability if background is complex
-   - Should feel bold, confident, and clean — like the review template headline style
-   - Takes up top 15-20% of canvas, centered
-
-2. SPLIT COMPARISON — Two distinct columns below headline
-   LEFT COLUMN (THE WINNER — our product):
-   - Warm, positive background tint (use brand accent color at 15% opacity)
-   - Green checkmarks (bold, modern style — not clip-art)
-   - Points:
+2. SPLIT COMPARISON — two columns:
+   LEFT (winner): Warm brand-tinted background, green ✓ checkmarks.
 ${oursPoints}
-   - Text should be bold, confident, specific
-
-   RIGHT COLUMN (THE LOSER — the competition):
-   - Cool, muted, grey/washed-out background tint
-   - Red X marks (bold, clear)
-   - Points:
+   RIGHT (loser): Cool grey/muted background, red ✗ marks.
 ${theirsPoints}
-   - Text should feel damning but factual
+   Each point: MAX 4 WORDS rendered. Single vertical column per side, evenly spaced, aligned. Same count both sides. NO duplicates — drop any repeated points.
 
-3. PRODUCT — Placed on the LEFT (winning) side
+3. PRODUCT: Fully on LEFT side only. NEVER crosses center divider. Scale down if needed. Brand logo visible on positive side. Slight 5-10° tilt, dramatic lighting.
 
-PRODUCT PLACEMENT (STRICT):
-- The product MUST be fully contained within the LEFT (brand/green checkmark) side.
-- The product should NOT cross the center dividing line into the competitor side.
-- Position the product in the lower-center area of the LEFT half, or slightly left of center.
-- The brand logo on the product packaging must be clearly visible and must appear on the LEFT (positive) side.
-- If the product is too wide to fit entirely in the left half, scale it down. NEVER let brand imagery bleed into the competitor/negative side.
-
-COMPARISON POINTS LAYOUT (STRICT):
-- LEFT SIDE: Exactly 3-4 checkmark points in a SINGLE VERTICAL COLUMN, evenly spaced.
-  * All points must stay ABOVE the product or in a clean column to the LEFT of the product.
-  * NO points should wrap below the product or appear in a second column at the bottom.
-  * Every point must be vertically aligned with the others.
-- RIGHT SIDE: Exactly 3-4 X-mark points in a SINGLE VERTICAL COLUMN, evenly spaced.
-  * Vertically aligned, matching the left side's vertical rhythm.
-- LEFT and RIGHT must have the SAME number of points (3 or 4, matching).
-- NO duplicate points. Every point must be unique. If the ad copy contains duplicates, drop the duplicate and use only unique points.
-
-   - Angled slightly (~5-10° tilt) to add dynamism
-   - Dramatic product lighting, premium feel
-
-TEXT LENGTH RULE FOR COMPARISON POINTS:
-- Each comparison point must be MAXIMUM 4 WORDS rendered in the image
-- If the provided text is longer, use only the first 3-4 words or rephrase to be shorter
-- Short = readable at phone size = better ad performance
-- Example: "Activates AMPK for cellular repair" → render as "Cellular Repair"
-
-DESIGN ENERGY: Think debate stage, confident brand, "the choice is obvious" energy
-- Strong vertical divider between columns (can be subtle gradient fade or clean line)
-- Typography: "${brand.headingFont}" for headline, "${brand.bodyFont}" for points
-- Overall feel: Bold, editorial, makes the viewer instantly see which side wins
+Strong vertical divider between columns. Bold editorial feel.
 
 OUTPUT: EXACTLY ${canvasSize} pixels. ${dimensions}.`;
 }
@@ -614,43 +363,17 @@ function buildBenefitsPrompt(adCopy: AdCopyInput, aspectRatio: string, canvasSiz
 
   const coreDirection = buildCoreCreativeDirection(brand, canvasSize, dimensions);
 
-  return `Generate a bold, listicle-style ${aspectRatio} benefits advertisement for Meta.
+  return `Generate a ${aspectRatio} listicle-style benefits Meta ad. Clean, scannable, absorbable in 2 seconds.
 
 ${coreDirection}
 
-THIS IS A "MINI LANDING PAGE" AD — clean, scannable, benefit-focused. Think of it as a listicle someone can absorb in 2 seconds.
-
 LAYOUT:
+1. HEADLINE (top): "${headline}" — BOLD, LARGE, max 2 lines, centered. High contrast, text shadow if needed.
 
-1. HEADLINE — Top of canvas
-   - Text: "${headline}"
-   - NO box, NO banner, NO pill behind the text
-   - BOLD, LARGE standalone text directly on the background
-   - High contrast color against background (white on dark, dark on light)
-   - Subtle text shadow if needed for readability
-   - Max 2 lines
-   - Centered
-
-2. BENEFITS LIST — Vertically stacked, clean layout
-   - Each benefit has a small thin line icon + text
-   - Icons: thin line style (Lucide/Phosphor), colored with brand accent
-   - Text: Clean, readable, 3-5 words each
-   - Subtle separator or spacing between items
-   - Benefits:
+2. BENEFITS LIST — vertical stack, each with thin line icon + text (3-5 words each):
    • ${benefits}
 
-3. PRODUCT — Positioned alongside or below the benefits list
-   - Hero treatment, dramatic lighting
-   - Can be slightly overlapping the benefits list for visual depth
-   - Takes up ~40-50% of canvas width
-
-BACKGROUND: Rich gradient or textured surface using brand palette (${brand.bgColor} as tonal guide). NOT flat.
-TYPOGRAPHY: "${brand.headingFont}" for headline, "${brand.bodyFont}" for benefits.
-
-WHAT NOT TO DO:
-- Do NOT use a flat single-color background
-- Do NOT make text small or hard to read
-- Do NOT clutter with too many elements
+3. PRODUCT: alongside or below benefits, 40-50% canvas width, dramatic lighting, can slightly overlap list for depth.
 
 OUTPUT: EXACTLY ${canvasSize} pixels. ${dimensions}.`;
 }
