@@ -386,7 +386,6 @@ OUTPUT: EXACTLY ${canvasSize} pixels. ${dimensions}.`;
 
 function buildConceptPrompt(adCopy: AdCopyInput, aspectRatio: string, canvasSize: string, dimensions: string, brand: BrandValues, productData?: any): string {
   const productTitle = productData?.title || 'product';
-  const productTitle = productData?.title || 'product';
   const productBenefits = productData?.benefits?.slice(0, 4)?.join(', ') || 'general wellness';
   const productFeatures = productData?.features?.slice(0, 4)?.join(', ') || '';
   const productCategory = productData?.description?.substring(0, 200) || '';
