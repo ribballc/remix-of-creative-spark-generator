@@ -91,7 +91,19 @@ serve(async (req) => {
       throw new Error(`Lovable AI error: ${response.status} - ${errorText}`);
     }
 
-    const data = await response.json();
+    const responseText = await response.text();
+    if (!responseText || responseText.trim().length === 0) {
+      console.error('AI returned empty response body');
+      return new Response(JSON.stringify({ success: false, error: 'AI returned an empty response. Please try again.' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
+    let data: any;
+    try {
+      data = JSON.parse(responseText);
+    } catch (parseErr) {
+      console.error('Failed to parse AI response:', responseText.substring(0, 500));
+      return new Response(JSON.stringify({ success: false, error: 'AI returned an invalid response. Please try again.' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
     console.log('AI response keys:', JSON.stringify(Object.keys(data.choices?.[0]?.message || {})));
 
     const choiceError = data.choices?.[0]?.error;
