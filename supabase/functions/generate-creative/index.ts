@@ -229,7 +229,7 @@ function buildPromptForTemplate(
     case 'benefits':
       return buildBenefitsPrompt(adCopy, aspectRatio, canvasSize, dimensions, brand);
     case 'concept':
-      return buildConceptPrompt(adCopy, aspectRatio, canvasSize, dimensions, brand);
+      return buildConceptPrompt(adCopy, aspectRatio, canvasSize, dimensions, brand, productData);
     default:
       return buildFeaturesBenefitsPrompt(adCopy, aspectRatio, canvasSize, dimensions, brand);
   }
@@ -384,31 +384,39 @@ LAYOUT:
 OUTPUT: EXACTLY ${canvasSize} pixels. ${dimensions}.`;
 }
 
-function buildConceptPrompt(adCopy: AdCopyInput, aspectRatio: string, canvasSize: string, dimensions: string, brand: BrandValues): string {
-  const headline = adCopy.headline || 'CONCEPT CREATIVE';
-  const sceneDesc = adCopy.scene_description || 'Dramatic cinematic product scene with moody lighting';
-  const educationCopy = adCopy.education_copy || '';
-  const footerCopy = adCopy.footer_copy || '';
-  const badgePills = adCopy.badge_pills?.join('  |  ') || '';
-  const safeZone = '40px';
+function buildConceptPrompt(adCopy: AdCopyInput, aspectRatio: string, canvasSize: string, dimensions: string, brand: BrandValues, productData?: any): string {
+  const productTitle = productData?.title || 'product';
+  const productTitle = productData?.title || 'product';
+  const productBenefits = productData?.benefits?.slice(0, 4)?.join(', ') || 'general wellness';
+  const productFeatures = productData?.features?.slice(0, 4)?.join(', ') || '';
+  const productCategory = productData?.description?.substring(0, 200) || '';
 
-  return `Generate a ${aspectRatio} surreal, hyper-real, cinematic advertisement. EXACTLY ${canvasSize} pixels (${dimensions}). FULL-BLEED — no borders/frames.
+  return `You are an award-winning creative director. Generate a completely unique ${aspectRatio} cinematic advertisement. EXACTLY ${canvasSize} pixels (${dimensions}). FULL-BLEED — no borders/frames.
 
-THIS IS A CONCEPT CREATIVE — the scene IS the ad. Not a standard product layout.
+PRODUCT CONTEXT (inspire your concept — do NOT list as text):
+- Product: ${productTitle}
+- Benefits: ${productBenefits}
+- Features: ${productFeatures}
+- Category: ${productCategory}
+- Brand colors: ${brand.bgColor}, accent ${brand.accentColor}
 
-SCENE: ${sceneDesc}
+YOUR TASK: Invent a UNIQUE visual concept — a clever, cinematic scene that metaphorically communicates what this product does. Every generation must be completely different.
 
-PRODUCT: The attached image is the HERO element (15-25% canvas). SHARP, well-lit, label readable. Naturally integrated into the scene — sitting on a surface, emerging from concept, positioned as the solution. Packaging text ACCURATE and UNCHANGED.
+CONCEPT DIRECTION — pick ONE randomly:
+1. METAPHOR: Real-world object mirroring the benefit (chess board, gas gauge on EMPTY, cracked trophy, hourglass, lab beakers, rusted vs polished gears)
+2. CONTRAST: Two halves showing problem vs solution (chemical label vs clean ingredient, wilting vs thriving plant, cluttered cabinet vs single product)
+3. ENVIRONMENT: Product in atmospheric setting communicating purpose (moody nightstand, gym locker with steam, sunlit kitchen, golden hour trail)
 
-TYPOGRAPHY: Study the product packaging. Match its font style for headlines.
-- Headline: "${headline}" — BOLD, ALL CAPS, top 20-30%. WHITE on dark scenes, DARK on light. Text shadow (2px, rgba(0,0,0,0.6)). LARGE and dominant.
-${educationCopy ? `- Education: "${educationCopy}" — smaller, lighter, below headline, 80% opacity. Max 2 lines.` : ''}
-${footerCopy ? `- Footer: "${footerCopy}" — small, subtle, bottom, 60% opacity.` : ''}
-${badgePills ? `- Pills: ${badgePills} — small rounded-rect pills, horizontal row, bottom 10%, semi-transparent backing, clean text.` : ''}
+PHOTOGRAPHIC REALISM (must NOT look AI-generated):
+- Look like a PHOTOGRAPH from a real shoot. One clear key light, natural shadows, realistic textures (wood grain, glass, metal patina). Cinematic muted color grading. Asymmetric composition. Shallow DOF. Subtle atmosphere (dust, haze). Small imperfections for realism. NO waxy surfaces, NO symmetric floating objects, NO oversaturation.
 
-VISUAL: 8K quality, cinematic color grading, dramatic volumetric lighting, depth of field (product sharp, bg subtle blur). Frame from a high-budget commercial. Colors complement brand (${brand.bgColor}, ${brand.accentColor}). Rich shadows, specular highlights, realistic textures.
+PRODUCT: Attached image is the HERO (15-25% canvas). Sharp, well-lit, label readable. Sits naturally in scene (on surface/shelf) — NOT floating. Packaging accurate.
 
-CONTRAST: All text instantly readable. Dark scene → white text + shadow. Light scene → dark text. NEVER blend text into scene.
+TYPOGRAPHY: Match font style from product packaging.
+- HEADLINE: 2-6 words, ALL CAPS, bold. Clever + intriguing, ties the metaphor. NOT generic ("Premium Quality") or aggressive ("Stop Poisoning Yourself"). YES: "THE AGING GAME.", "RUNNING ON FUMES.", "DATE NIGHT SHOULD WORK." Top 20-25%.
+- EDUCATION LINE: 1 short sentence below headline, lighter weight, max 12 words.
+- OPTIONAL PILLS: 2-3 keyword badges at bottom (e.g., "HEALTHY AGING | BRAIN SUPPORT"), small, semi-transparent. Skip if not needed.
 
-SAFE ZONES: ${safeZone} padding. OUTPUT: EXACTLY ${canvasSize} pixels.`;
+CONTRAST: White text + shadow on dark scenes. Dark text on light. NEVER blend text into background.
+SAFE ZONES: 40px padding. OUTPUT: EXACTLY ${canvasSize} pixels.`;
 }

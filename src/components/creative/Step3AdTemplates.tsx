@@ -311,11 +311,136 @@ function UnifiedTemplateCard({
   );
 }
 
+function ConceptCreativeCard({
+  onGenerate, generatedCreatives, globalProductImage,
+}: {
+  onGenerate: (template: AdTemplate, productImageUrl: string, adCopy: AdCopy, referenceImageUrl?: string) => Promise<void>;
+  generatedCreatives: GeneratedCreative[];
+  globalProductImage?: string | null;
+}) {
+  const [aspectRatio, setAspectRatio] = useState<'9:16' | '1:1'>('1:1');
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const templateId = aspectRatio === '9:16' ? 'concept_916' : 'concept_11';
+  const template = AD_TEMPLATES.find(t => t.id === templateId)!;
+
+  const handleGenerate = async () => {
+    if (!globalProductImage) return;
+    setIsGenerating(true);
+    try {
+      const conceptCopy: AdCopy = { headline: '', type: 'concept' };
+      await onGenerate(template, globalProductImage, conceptCopy);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const templateCreatives = generatedCreatives.filter(c => c.templateId === template.id);
+  const latestCreative = templateCreatives[templateCreatives.length - 1];
+
+  const handleDownload = () => {
+    const url = latestCreative?.outputImageUrl;
+    if (url) {
+      fetch(url).then(res => res.blob()).then(blob => {
+        const blobUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = `concept-${Date.now()}.jpg`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(blobUrl);
+      });
+    }
+  };
+
+  return (
+    <div className="bg-card border border-border rounded-2xl overflow-hidden">
+      <div className="px-6 py-4 border-b border-border bg-secondary/30">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-foreground">Concept Creative</h3>
+              <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">Random</span>
+            </div>
+            <p className="text-sm text-muted-foreground mt-0.5">Unique cinematic concept — different every time</p>
+          </div>
+          <div className="flex items-center gap-1 bg-secondary rounded-lg p-1">
+            {(['9:16', '1:1'] as const).map(ratio => (
+              <button
+                key={ratio}
+                onClick={() => setAspectRatio(ratio)}
+                className={cn(
+                  "px-3 py-1.5 text-sm font-medium rounded-md transition-all",
+                  aspectRatio === ratio ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {ratio}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="p-6 space-y-4">
+        <div className={cn(
+          "border border-border rounded-xl flex items-center justify-center bg-gradient-to-br from-secondary/50 to-muted/50 overflow-hidden relative mx-auto max-w-md",
+          aspectRatio === '9:16' ? 'aspect-[9/16]' : 'aspect-square'
+        )}>
+          {latestCreative?.status === 'completed' ? (
+            <>
+              <div className="absolute inset-0 bg-white" />
+              <img src={latestCreative.outputImageUrl} alt="Generated concept" className="w-full h-full object-contain relative z-10" />
+              <div className="absolute bottom-2 right-2 flex gap-1.5 z-20">
+                <Button size="icon" variant="secondary" className="h-8 w-8 rounded-lg shadow-lg" onClick={handleDownload}>
+                  <Download className="w-4 h-4" />
+                </Button>
+                <Button size="icon" variant="secondary" className="h-8 w-8 rounded-lg shadow-lg" onClick={handleGenerate} disabled={isGenerating}>
+                  <RefreshCw className={cn("w-4 h-4", isGenerating && "animate-spin")} />
+                </Button>
+              </div>
+            </>
+          ) : latestCreative?.status === 'generating' ? (
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+              <span className="text-xs text-muted-foreground">Creating concept...</span>
+            </div>
+          ) : latestCreative?.status === 'error' ? (
+            <div className="flex flex-col items-center gap-2 p-4 text-center">
+              <AlertCircle className="w-6 h-6 text-destructive" />
+              <span className="text-xs text-destructive font-medium">Generation failed</span>
+            </div>
+          ) : (
+            <div className="text-center p-6">
+              <Sparkles className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+              <span className="text-sm text-muted-foreground">Hit generate for a unique concept</span>
+            </div>
+          )}
+        </div>
+
+        <Button onClick={handleGenerate} disabled={isGenerating || !globalProductImage} size="lg" className="w-full h-12 rounded-xl font-semibold gap-2">
+          {isGenerating ? (
+            <>
+              <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+              Generating concept...
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-4 h-4" />
+              Generate Random Concept
+            </>
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 export function Step3AdTemplates({ adCopies, generatedCreatives, onGenerateCreative, onPrev, productImageBase64, loadingStage }: Step3Props) {
   const hasReviews = Array.isArray(adCopies) && adCopies.some(copy => copy.type === 'review');
   const hasComparison = Array.isArray(adCopies) && adCopies.some(copy => copy.type === 'comparison');
   const hasBenefits = Array.isArray(adCopies) && adCopies.some(copy => copy.type === 'benefit' || copy.type === 'features_benefits');
-  const hasConcept = Array.isArray(adCopies) && adCopies.some(copy => copy.type === 'concept');
+  
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -330,7 +455,7 @@ export function Step3AdTemplates({ adCopies, generatedCreatives, onGenerateCreat
       <UnifiedTemplateCard templateType="comparison" title="Us vs Them" description="Side-by-side comparison highlighting your advantages" adCopies={adCopies} onGenerate={onGenerateCreative} generatedCreatives={generatedCreatives} disabled={!hasComparison} disabledReason="No comparison data generated" globalProductImage={productImageBase64} />
       <UnifiedTemplateCard templateType="review" title="Customer Review" description="Build trust with social proof and customer testimonials" adCopies={adCopies} onGenerate={onGenerateCreative} generatedCreatives={generatedCreatives} disabled={!hasReviews} disabledReason="No reviews found on the product page" globalProductImage={productImageBase64} />
       <UnifiedTemplateCard templateType="benefits" title="Pure Benefits" description="Focus purely on product benefits with clean layout" adCopies={adCopies} onGenerate={onGenerateCreative} generatedCreatives={generatedCreatives} disabled={!hasBenefits} disabledReason="No benefit copy generated" globalProductImage={productImageBase64} />
-      <UnifiedTemplateCard templateType="concept" title="Concept Creative" description="Surreal cinematic ads with visual metaphors — scroll-stopping, provocative, unique" adCopies={adCopies} onGenerate={onGenerateCreative} generatedCreatives={generatedCreatives} disabled={!hasConcept} disabledReason="No concept copy generated" globalProductImage={productImageBase64} />
+      <ConceptCreativeCard onGenerate={onGenerateCreative} generatedCreatives={generatedCreatives} globalProductImage={productImageBase64} />
 
       <div className="pt-4">
         <Button variant="outline" onClick={onPrev} className="h-11 px-6 rounded-xl font-medium">
