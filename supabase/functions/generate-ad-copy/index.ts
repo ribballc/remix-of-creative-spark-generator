@@ -24,10 +24,10 @@ serve(async (req) => {
     if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY is not configured');
 
     // Only include review info if there are actual reviews
-    const hasValidReviews = productData.reviewCount && 
-      productData.reviewCount.trim() !== '' && 
-      productData.reviewCount !== '0' &&
-      parseInt(productData.reviewCount.replace(/[^0-9]/g, '')) > 0;
+    const reviewCountRaw = (productData.reviewCount || '0').replace(/[^0-9]/g, '');
+    const reviewCountNum = parseInt(reviewCountRaw);
+    const hasValidReviews = reviewCountNum > 0;
+    const hasEnoughReviews = reviewCountNum >= 500;
     
     const hasValidRating = productData.rating && 
       productData.rating.trim() !== '' && 
@@ -52,29 +52,44 @@ Generate exactly 10 ad copy variations following these frameworks:
 
 **6 Features and Benefits Grid ads (type: "features_benefits"):**
 Each must include:
-- headline_primary: 2-4 words that STOP THE SCROLL. Think provocative, curiosity-driven, or bold claims.
-  - STRICT: 2, 3, or 4 words maximum. Count carefully.
-  - GOOD examples: "Trouble Pooping?", "Ditch The Powder", "Pills Are Dead", "Your Gut Called", "Finally Good Nutrition"
-  - BAD examples: "Premium Quality", "Natural Solution", "Clean Formula" — these are invisible on Meta, nobody stops scrolling for them
-- subheadline_primary: 8 words MAX, single line, feature qualifier (ingredient, spec, or proof)
-  - GOOD: "With 500mg L-Theanine per serving" (6 words)
-  - BAD: "Contains clinically studied doses of premium ingredients daily" (too long)
+- headline_primary: 2-5 words that STOP THE SCROLL. Use one of these proven hook frameworks:
+  * PROVOCATIVE QUESTION: "Your Gut Is Broken?" / "Still Swallowing Pills?" / "Tired Of Feeling Tired?"
+  * BOLD CLAIM: "Detox Done Different" / "Your New Morning Ritual" / "The Last Supplement You'll Buy"
+  * PATTERN INTERRUPT: "Wait... It Actually Works" / "Not Another Green Powder" / "Okay But This One Slaps"
+  * ENEMY FRAMING: "Pills Are Dead" / "Goodbye Chemical Skincare" / "What Big Pharma Won't Tell You"
+  - STRICT: 2-5 words maximum. Must be punchy, clever, and make someone curious.
+  - BAD EXAMPLES (too generic, invisible on Meta): "Premium Quality", "Natural Solution", "Clean Formula", "Clinically Proven"
+  - GOOD EXAMPLES (scroll-stopping): "Your Liver Called", "Detox Done Right", "Not Your Mom's Vitamins", "Skin So Good It's Suspicious"
+- subheadline_primary: 4-8 words, a qualifying statement that adds credibility or intrigue BELOW the headline
+  - This is the "oh wait, tell me more" line
+  - GOOD: "Ancient herbs, modern capsules" / "Zero crash, pure focus, all day" / "What 10,000 women already know"
+  - BAD: "With 500mg per serving" / "Premium blend of ingredients" (too clinical, no personality)
 - feature_benefits: Array of EXACTLY 4 callouts, each with:
   - text: 2-4 words describing feature+benefit (e.g., "Clean Caffeine", "No Crash Energy")
   - meaning_keywords: comma-separated keywords for icon selection (e.g., "energy, caffeine, natural")
   - priority_rank: 1-4 (1 is highest priority)
 
 **2 Comparison-focused ads (type: "comparison"):**
-- headline: Bold "Us vs Them" style headline — provocative and opinionated
+- headline: A bold, opinionated "Us vs Them" headline that picks a SPECIFIC fight. Not generic. Name the enemy category.
+  - GOOD: "Us vs 'Quick Fix' Detoxes" / "This vs Your Medicine Cabinet" / "Real Food vs Lab Food"
+  - BAD: "Us vs The Competition" / "Our Product vs Others" (too vague, zero personality)
 - NO subheadline needed
+- comparisonPoints: Make the "ours" points feel CONFIDENT and SPECIFIC, make "theirs" points feel DAMNING
+  - ours GOOD: "✓ 12 ancient botanicals" / "✓ Works in 7 days" / "✓ Zero crash, real energy"
+  - ours BAD: "✓ Clean ingredients" / "✓ High quality" (vague, could be anyone)
+  - theirs GOOD: "✗ Synthetic fillers you can't pronounce" / "✗ Wears off by noon" / "✗ That weird aftertaste"
+  - theirs BAD: "✗ Artificial additives" / "✗ Low quality" (generic, not visceral)
 - comparisonPoints with "ours" (4 positive points with ✓) and "theirs" (4 negative points with ✗)
 
 ${hasValidRating && hasValidReviews ? `**2 Review/Social proof style ads (type: "review"):**
-- headline: A believable, specific, emotional customer quote (6-12 words). Must sound like a REAL person wrote it — conversational, specific, with a real outcome.
-  - GOOD: "I've never had this much energy at 3pm", "My skin literally glows now and my husband noticed", "I stopped craving sugar after week two"
-  - BAD: "Great product would recommend", "This supplement changed my life" — too generic
+- headline: 6-12 words — a BELIEVABLE, SPECIFIC customer testimonial. Must sound like a real person texting their friend, not a marketing department writing copy.
+  - Include a SPECIFIC, TANGIBLE result or moment. Vague praise = invisible ad.
+  - GOOD: "I stopped craving sugar by week two" / "My husband asked what I'm doing differently" / "Three months in and my bloodwork shocked my doctor"
+  - BAD: "Great product would recommend" / "This changed my life" / "Amazing results" (too generic, sounds fake)
   - CRITICAL: Must end at a natural sentence break. Never cut off mid-thought.
-- subheadline: rating callout like "Rated ${productData.rating}/5 by ${productData.reviewCount}+ happy customers"
+- subheadline: Rating line. CRITICAL RULES:
+  ${hasEnoughReviews ? `- Show "Rated ${productData.rating}/5 by ${productData.reviewCount}+ customers"` : `- Show ONLY the star rating like "★★★★★ ${productData.rating}/5" — do NOT show review count under 500`}
+  - NEVER invent or inflate review counts
 - reviewCount: "${productData.reviewCount}"
 - rating: "${productData.rating}"` : `**2 Additional Features and Benefits ads:**
 - Since no reviews, create 2 more features_benefits type ads instead`}
@@ -83,8 +98,8 @@ Respond ONLY with a valid JSON array. Example format:
 
 [
   {
-    "headline_primary": "Trouble Pooping?",
-    "subheadline_primary": "With 500mg L-Theanine per serving",
+    "headline_primary": "Your Gut Called",
+    "subheadline_primary": "Ancient herbs, modern capsules",
     "feature_benefits": [
       { "text": "Clean Caffeine", "meaning_keywords": "energy, caffeine, natural", "priority_rank": 1 },
       { "text": "No Crash", "meaning_keywords": "sustained, smooth, balanced", "priority_rank": 2 },
@@ -94,16 +109,16 @@ Respond ONLY with a valid JSON array. Example format:
     "type": "features_benefits"
   },
   {
-    "headline": "Us vs Generic Supplements",
+    "headline": "This vs Your Medicine Cabinet",
     "type": "comparison",
     "comparisonPoints": {
-      "ours": ["✓ Clean ingredients", "✓ Third-party tested", "✓ Full doses", "✓ No fillers"],
-      "theirs": ["✗ Artificial additives", "✗ No testing", "✗ Underdosed", "✗ Hidden fillers"]
+      "ours": ["✓ 12 ancient botanicals", "✓ Works in 7 days", "✓ Zero crash energy", "✓ No synthetic fillers"],
+      "theirs": ["✗ Synthetic fillers you can't pronounce", "✗ Wears off by noon", "✗ That weird aftertaste", "✗ Hidden proprietary blends"]
     }
   }${hasValidRating && hasValidReviews ? `,
   {
-    "headline": "I've never had this much energy at 3pm",
-    "subheadline": "Rated ${productData.rating}/5 by ${productData.reviewCount}+ happy customers",
+    "headline": "I stopped craving sugar by week two",
+    "subheadline": "${hasEnoughReviews ? `Rated ${productData.rating}/5 by ${productData.reviewCount}+ customers` : `★★★★★ ${productData.rating}/5`}",
     "type": "review",
     "reviewCount": "${productData.reviewCount}",
     "rating": "${productData.rating}"
@@ -121,10 +136,10 @@ Respond ONLY with a valid JSON array. Example format:
       body: JSON.stringify({
         model: 'google/gemini-2.5-flash',
         messages: [
-          { role: 'system', content: 'You are a top-tier DTC performance creative strategist who has scaled brands like Grüns, AG1, Obvi, and Seed to $100M+. You write scroll-stopping ad copy that converts on Meta. Your copy is SHORT, PUNCHY, PROVOCATIVE, and BENEFIT-DRIVEN. You never write generic marketing speak. You write like a human talking to a friend, not a corporation talking to a customer. Always respond with valid JSON only, no markdown formatting.' },
+          { role: 'system', content: 'You are a world-class DTC performance creative strategist who writes scroll-stopping ad copy for Meta ads. Your copy has generated $100M+ in revenue for brands like AG1, Grüns, Obvi, and RYZE. You write SHORT, PUNCHY, PROVOCATIVE copy that makes people stop scrolling. Your headlines are clever — they use curiosity gaps, provocative questions, bold claims, or pattern interrupts. You NEVER write generic marketing speak like "Premium Quality" or "Natural Solution." You write like a witty friend giving a real recommendation, not a corporation writing ad copy. Always respond with valid JSON only, no markdown formatting.' },
           { role: 'user', content: prompt }
         ],
-        temperature: 0.8,
+        temperature: 0.95,
       }),
     });
 
