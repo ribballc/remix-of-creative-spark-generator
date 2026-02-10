@@ -21,11 +21,9 @@ serve(async (req) => {
     }
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY is not configured');
-    }
+    if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY is not configured');
 
-    // Only include review info if there are actual reviews (not empty, not "0", not "0.00")
+    // Only include review info if there are actual reviews
     const hasValidReviews = productData.reviewCount && 
       productData.reviewCount.trim() !== '' && 
       productData.reviewCount !== '0' &&
@@ -37,14 +35,10 @@ serve(async (req) => {
       productData.rating !== '0.00' &&
       parseFloat(productData.rating) > 0;
     
-    const reviewInfo = hasValidReviews
-      ? `Review Count: ${productData.reviewCount} reviews` 
-      : '';
-    const ratingInfo = hasValidRating
-      ? `Rating: ${productData.rating}/5 stars` 
-      : '';
+    const reviewInfo = hasValidReviews ? `Review Count: ${productData.reviewCount} reviews` : '';
+    const ratingInfo = hasValidRating ? `Rating: ${productData.rating}/5 stars` : '';
 
-    const prompt = `You are an expert advertising copywriter. Based on the following product information, generate ad copy variations.
+    const prompt = `You are generating ad copy for a DTC brand's Meta ads. Based on the following product info, generate scroll-stopping ad copy variations.
 
 Product Title: ${productData.title}
 Product Description: ${productData.description}
@@ -58,38 +52,38 @@ Generate exactly 10 ad copy variations following these frameworks:
 
 **6 Features and Benefits Grid ads (type: "features_benefits"):**
 Each must include:
-- headline_primary: 2-4 words ONLY, benefit-focused (e.g., "Clinically Proven", "Premium Energy", "Clean Formula")
-  - STRICT: Count words carefully. 2, 3, or 4 words maximum. Never exceed 4 words.
-  - GOOD: "Clinically Proven" (2), "Premium Clean Energy" (3), "Science Backed Formula" (3)
-  - BAD: "Boost Your Energy Naturally Every Day" (6 words - TOO LONG)
+- headline_primary: 2-4 words that STOP THE SCROLL. Think provocative, curiosity-driven, or bold claims.
+  - STRICT: 2, 3, or 4 words maximum. Count carefully.
+  - GOOD examples: "Trouble Pooping?", "Ditch The Powder", "Pills Are Dead", "Your Gut Called", "Finally Good Nutrition"
+  - BAD examples: "Premium Quality", "Natural Solution", "Clean Formula" — these are invisible on Meta, nobody stops scrolling for them
 - subheadline_primary: 8 words MAX, single line, feature qualifier (ingredient, spec, or proof)
-  - STRICT: Count words carefully. Never exceed 8 words. Must fit on ONE line.
   - GOOD: "With 500mg L-Theanine per serving" (6 words)
-  - GOOD: "Backed by 12 clinical studies on absorption" (7 words)
-  - BAD: "Contains clinically studied doses of premium ingredients daily" (8+ words - TOO LONG)
+  - BAD: "Contains clinically studied doses of premium ingredients daily" (too long)
 - feature_benefits: Array of EXACTLY 4 callouts, each with:
   - text: 2-4 words describing feature+benefit (e.g., "Clean Caffeine", "No Crash Energy")
   - meaning_keywords: comma-separated keywords for icon selection (e.g., "energy, caffeine, natural")
   - priority_rank: 1-4 (1 is highest priority)
 
 **2 Comparison-focused ads (type: "comparison"):**
-- headline: "Us vs Them" style headline
+- headline: Bold "Us vs Them" style headline — provocative and opinionated
 - NO subheadline needed
 - comparisonPoints with "ours" (4 positive points with ✓) and "theirs" (4 negative points with ✗)
 
 ${hasValidRating && hasValidReviews ? `**2 Review/Social proof style ads (type: "review"):**
-- headline: EXACTLY 8-10 words - a customer testimonial that ends at a natural sentence break
-- CRITICAL: Never cut off mid-thought. End at a complete idea.
-- subheadline: rating callout like "Rated ${productData.rating}/5 for metabolic support"
+- headline: A believable, specific, emotional customer quote (6-12 words). Must sound like a REAL person wrote it — conversational, specific, with a real outcome.
+  - GOOD: "I've never had this much energy at 3pm", "My skin literally glows now and my husband noticed", "I stopped craving sugar after week two"
+  - BAD: "Great product would recommend", "This supplement changed my life" — too generic
+  - CRITICAL: Must end at a natural sentence break. Never cut off mid-thought.
+- subheadline: rating callout like "Rated ${productData.rating}/5 by ${productData.reviewCount}+ happy customers"
 - reviewCount: "${productData.reviewCount}"
 - rating: "${productData.rating}"` : `**2 Additional Features and Benefits ads:**
 - Since no reviews, create 2 more features_benefits type ads instead`}
 
-Respond ONLY with a valid JSON array. Examples of correct format:
+Respond ONLY with a valid JSON array. Example format:
 
 [
   {
-    "headline_primary": "Clinically Proven",
+    "headline_primary": "Trouble Pooping?",
     "subheadline_primary": "With 500mg L-Theanine per serving",
     "feature_benefits": [
       { "text": "Clean Caffeine", "meaning_keywords": "energy, caffeine, natural", "priority_rank": 1 },
@@ -108,8 +102,8 @@ Respond ONLY with a valid JSON array. Examples of correct format:
     }
   }${hasValidRating && hasValidReviews ? `,
   {
-    "headline": "I've noticed a massive difference in my daily energy",
-    "subheadline": "Rated ${productData.rating}/5 for energy & focus",
+    "headline": "I've never had this much energy at 3pm",
+    "subheadline": "Rated ${productData.rating}/5 by ${productData.reviewCount}+ happy customers",
     "type": "review",
     "reviewCount": "${productData.reviewCount}",
     "rating": "${productData.rating}"
@@ -127,7 +121,7 @@ Respond ONLY with a valid JSON array. Examples of correct format:
       body: JSON.stringify({
         model: 'google/gemini-2.5-flash',
         messages: [
-          { role: 'system', content: 'You are an expert advertising copywriter. Always respond with valid JSON only, no markdown formatting.' },
+          { role: 'system', content: 'You are a top-tier DTC performance creative strategist who has scaled brands like Grüns, AG1, Obvi, and Seed to $100M+. You write scroll-stopping ad copy that converts on Meta. Your copy is SHORT, PUNCHY, PROVOCATIVE, and BENEFIT-DRIVEN. You never write generic marketing speak. You write like a human talking to a friend, not a corporation talking to a customer. Always respond with valid JSON only, no markdown formatting.' },
           { role: 'user', content: prompt }
         ],
         temperature: 0.8,
@@ -137,20 +131,12 @@ Respond ONLY with a valid JSON array. Examples of correct format:
     if (!response.ok) {
       const errorText = await response.text();
       console.error('AI API error:', response.status, errorText);
-      
       if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ success: false, error: 'Rate limit exceeded. Please try again in a moment.' }),
-          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+        return new Response(JSON.stringify({ success: false, error: 'Rate limit exceeded. Please try again in a moment.' }), { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
       }
       if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ success: false, error: 'AI credits exhausted. Please add credits to continue.' }),
-          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+        return new Response(JSON.stringify({ success: false, error: 'AI credits exhausted. Please add credits to continue.' }), { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
       }
-      
       throw new Error(`AI API error: ${response.status}`);
     }
 
@@ -158,37 +144,24 @@ Respond ONLY with a valid JSON array. Examples of correct format:
     const content = aiData.choices?.[0]?.message?.content || '';
     
     console.log('AI response content length:', content.length);
-    console.log('AI response preview:', content.substring(0, 500));
 
-    // Parse the JSON response
     let adCopies;
     try {
-      // Remove markdown code blocks if present
       let jsonStr = content.replace(/```json?\n?|\n?```/g, '').trim();
-      
-      // Try to find JSON array in the response if it's wrapped in other text
       const arrayMatch = jsonStr.match(/\[[\s\S]*\]/);
-      if (arrayMatch) {
-        jsonStr = arrayMatch[0];
-      }
+      if (arrayMatch) jsonStr = arrayMatch[0];
       
       adCopies = JSON.parse(jsonStr);
       
-      // Validate it's an array
-      if (!Array.isArray(adCopies)) {
-        console.error('Parsed result is not an array:', typeof adCopies);
-        throw new Error('Response is not an array');
-      }
+      if (!Array.isArray(adCopies)) throw new Error('Response is not an array');
 
-      // Post-process features_benefits to ensure backward compatibility
+      // Post-process for backward compatibility
       adCopies = adCopies.map((copy: any) => {
         if (copy.type === 'features_benefits') {
-          // Map headline_primary to headline for backward compatibility
           return {
             ...copy,
             headline: copy.headline_primary || copy.headline || 'Premium Quality',
             subheadline: copy.subheadline_primary || copy.subheadline,
-            // Also create bulletPoints for legacy UI compatibility
             bulletPoints: copy.feature_benefits?.map((fb: any) => fb.text) || []
           };
         }
@@ -196,8 +169,7 @@ Respond ONLY with a valid JSON array. Examples of correct format:
       });
 
     } catch (parseError) {
-      console.error('Failed to parse AI response:', content);
-      console.error('Parse error:', parseError);
+      console.error('Failed to parse AI response:', content.substring(0, 500));
       throw new Error('Failed to parse ad copy response');
     }
 
