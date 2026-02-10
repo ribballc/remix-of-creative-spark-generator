@@ -308,20 +308,45 @@ BRAND TYPOGRAPHY MATCHING (APPLIES TO ALL TEXT):
 - Callout text should use a complementary clean font.
 - NEVER use a font that clashes with or feels disconnected from the product's visual identity.
 
-TYPOGRAPHY (CRITICAL — MUST match the product's brand identity):
-- LOOK AT THE ATTACHED PRODUCT IMAGE. Study the text/typography on the product packaging and label carefully.
-- ALL headline text in the ad MUST visually match the style, weight, and character of the fonts on the product packaging.
-- Specifically analyze:
-  * Is the product text serif or sans-serif? → Match that classification.
-  * Is it thin/light or heavy/bold? → Match that weight.
-  * Is it condensed/narrow or wide/extended? → Match that width.
-  * Is it rounded and friendly or sharp and angular? → Match that personality.
-  * What is the letter-spacing — tight, normal, or tracked out? → Match that spacing.
-- The headline font should feel like it BELONGS on the same shelf as the product packaging.
-- The body/callout font should be clean and readable, complementing the headline style.
-- DO NOT use a heavy, blocky, Impact-style sans-serif unless the product packaging uses that style.
-- DO NOT use a casual handwritten font unless the product packaging uses that style.
-- When in doubt: use a clean, modern, medium-weight sans-serif for callouts, and a refined serif or geometric sans for headlines — matched to the product's brand personality.
+TEXT CONTRAST (MANDATORY — ZERO EXCEPTIONS):
+- ALL headline text must be WHITE or CREAM on dark/medium backgrounds.
+- ALL headline text must be BLACK or DARK CHARCOAL on light backgrounds.
+- NEVER use brand accent color (orange, gold, amber, teal, etc.) as headline text color if the background is a similar warm/dark tone. This creates low contrast and the text disappears.
+- SPECIFICALLY: If the background is dark brown, deep amber, dark red, or warm dark tones → headline MUST be white/cream. NOT orange, NOT gold, NOT amber.
+- The test: squint at the image. If any text blends into the background, it FAILS. Fix it by switching to white or black.
+- This applies to: headlines, subheadlines, callouts, rating text, star ratings, comparison points.
+- If the brand's text color would be unreadable against the chosen background, OVERRIDE it with white or black. Readability > brand color.
+- Add subtle text shadow (2px, rgba(0,0,0,0.4)) on ALL text when background is a gradient or has any complexity.
+
+LAYOUT OVERFLOW PREVENTION:
+- ALL text elements must fit within their designated zones with comfortable padding (minimum 40px from any edge).
+- NO text should wrap into areas occupied by the product image.
+- NO text should extend below the product's base/shadow area unless that space is clearly designated for it.
+- If there are more copy points than can fit cleanly in the layout, REDUCE the font size or DROP the lowest-priority point. Never cram.
+- Callout points on the features_benefits template: maximum 4 points. If they don't fit around the product, use 3.
+- The product image is sacred space — nothing overlaps it except intentional design elements like the brand's own packaging text.
+
+TYPOGRAPHY (CRITICAL — must match brand identity):
+- STUDY the product image. The typography on the product packaging is the source of truth.
+- ALL headline text must visually match the font STYLE on the product packaging:
+  * Serif or sans-serif? → Match it.
+  * Light/medium/bold weight? → Match it.
+  * Condensed or normal width? → Match it.
+  * Rounded or sharp? → Match it.
+  * Letter-spacing tight, normal, or wide? → Match it.
+
+FONT VALUE INTERPRETATION:
+- If font = specific name (e.g., "Poppins"): Render closest visual match.
+- If font = "Match product packaging": Replicate the exact typographic style from the product image.
+- If font = "Modern geometric sans-serif": Style like Poppins, DM Sans, Montserrat.
+- If font = "Elegant serif": Style like Playfair Display, Cormorant, Lora.
+- If font = "Bold condensed sans-serif": Style like Oswald, Barlow Condensed.
+- If font = "Clean minimal sans-serif": Style like Inter, Helvetica Neue.
+- If font = "Clean sans-serif": Neutral, readable sans-serif for small text.
+
+CROSS-TEMPLATE CONSISTENCY:
+- ALL ad templates for the same product must use the SAME typographic style.
+- The review ad, features ad, and comparison ad should look like they came from the same brand's design system.
 
 OUTPUT: EXACTLY ${canvasSize} pixels. ${dimensions}.`;
 }
@@ -351,8 +376,14 @@ LAYOUT:
    - Text: "${headline}"
    - NO box, NO banner, NO pill shape, NO rounded rectangle behind the text
    - Render as BOLD, LARGE standalone text directly on the background
-   - Text color: White or cream (on dark/rich backgrounds) OR dark charcoal (on light backgrounds) — whichever gives maximum contrast
-   - Add a subtle text shadow (2px, 50% opacity black) if needed for readability on complex backgrounds
+   - Text color: WHITE or CREAM on dark/warm backgrounds (amber, brown, etc.). BLACK or DARK CHARCOAL on light backgrounds. NEVER orange, gold, or amber on warm backgrounds.
+   - Add a subtle text shadow (2px, 50% opacity black) for readability on complex backgrounds
+
+FEATURES/BENEFITS HEADLINE COLOR:
+- If the background is a warm gradient (amber, brown, red, orange tones): headline MUST be WHITE or CREAM. Never orange or gold.
+- If the background is cool/dark (navy, black, dark green): headline MUST be WHITE.
+- If the background is light (beige, white, cream): headline MUST be BLACK or DARK CHARCOAL.
+- The headline is the most important text element. It must POP against the background with maximum contrast.
    - TEXT MUST BE MASSIVE — this is the scroll-stopper
    - Max 2 lines. Takes up top 12-18% of canvas.
    - Centered horizontally
@@ -541,8 +572,25 @@ ${oursPoints}
 ${theirsPoints}
    - Text should feel damning but factual
 
-3. PRODUCT — Placed on the LEFT (winning) side, overlapping the center divider slightly
-   - Product is the hero of the winning side
+3. PRODUCT — Placed on the LEFT (winning) side
+
+PRODUCT PLACEMENT (STRICT):
+- The product MUST be fully contained within the LEFT (brand/green checkmark) side.
+- The product should NOT cross the center dividing line into the competitor side.
+- Position the product in the lower-center area of the LEFT half, or slightly left of center.
+- The brand logo on the product packaging must be clearly visible and must appear on the LEFT (positive) side.
+- If the product is too wide to fit entirely in the left half, scale it down. NEVER let brand imagery bleed into the competitor/negative side.
+
+COMPARISON POINTS LAYOUT (STRICT):
+- LEFT SIDE: Exactly 3-4 checkmark points in a SINGLE VERTICAL COLUMN, evenly spaced.
+  * All points must stay ABOVE the product or in a clean column to the LEFT of the product.
+  * NO points should wrap below the product or appear in a second column at the bottom.
+  * Every point must be vertically aligned with the others.
+- RIGHT SIDE: Exactly 3-4 X-mark points in a SINGLE VERTICAL COLUMN, evenly spaced.
+  * Vertically aligned, matching the left side's vertical rhythm.
+- LEFT and RIGHT must have the SAME number of points (3 or 4, matching).
+- NO duplicate points. Every point must be unique. If the ad copy contains duplicates, drop the duplicate and use only unique points.
+
    - Angled slightly (~5-10° tilt) to add dynamism
    - Dramatic product lighting, premium feel
 
