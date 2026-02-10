@@ -48,6 +48,19 @@ Price: ${productData.price || 'Not specified'}
 ${reviewInfo}
 ${ratingInfo}
 
+META ADS COMPLIANCE RULES (MANDATORY — every piece of copy must follow these):
+- NEVER claim to cure, treat, prevent, or diagnose any disease or medical condition
+- NEVER use "clinically proven" unless the specific product has clinical trials
+- NEVER use "guaranteed results" or "instant relief"
+- NEVER imply the viewer has a health condition using second-person language like "your anxiety", "your depression", "your disease"
+  - INSTEAD: Use inclusive/general framing: "feeling sluggish?" (not "your fatigue"), "want more energy?" (not "fix your exhaustion")
+- NEVER generate negative self-perception: no body-shaming, no "you look old", no "your skin is damaged"
+  - INSTEAD: Use aspiration: "Feel 10 years younger" → ALLOWED. "You look old" → BANNED.
+- SAFE language patterns:
+  - "Supports [function]" ✓ / "May help with [general wellness]" ✓ / "Formulated for [benefit]" ✓
+  - "Cures [condition]" ✗ BANNED / "Treats [disease]" ✗ BANNED / "Proven to fix [problem]" ✗ BANNED
+- For comparison ads: Compare to CATEGORIES ("quick-fix detoxes", "cheap supplements"), never to specific named competitor brands
+
 Generate exactly 10 ad copy variations following these frameworks:
 
 **6 Features and Benefits Grid ads (type: "features_benefits"):**
@@ -68,18 +81,20 @@ Each must include:
   - text: 2-4 words describing feature+benefit (e.g., "Clean Caffeine", "No Crash Energy")
   - meaning_keywords: comma-separated keywords for icon selection (e.g., "energy, caffeine, natural")
   - priority_rank: 1-4 (1 is highest priority)
+- compliance_safe_version: A rewritten version of headline_primary that uses only Meta-safe language (e.g., "supports", "may help"). Include this for every features_benefits ad.
 
 **2 Comparison-focused ads (type: "comparison"):**
 - headline: A bold, opinionated "Us vs Them" headline that picks a SPECIFIC fight. Not generic. Name the enemy category.
   - GOOD: "Us vs 'Quick Fix' Detoxes" / "This vs Your Medicine Cabinet" / "Real Food vs Lab Food"
   - BAD: "Us vs The Competition" / "Our Product vs Others" (too vague, zero personality)
 - NO subheadline needed
-- comparisonPoints: Make the "ours" points feel CONFIDENT and SPECIFIC, make "theirs" points feel DAMNING
-  - ours GOOD: "✓ 12 ancient botanicals" / "✓ Works in 7 days" / "✓ Zero crash, real energy"
-  - ours BAD: "✓ Clean ingredients" / "✓ High quality" (vague, could be anyone)
-  - theirs GOOD: "✗ Synthetic fillers you can't pronounce" / "✗ Wears off by noon" / "✗ That weird aftertaste"
-  - theirs BAD: "✗ Artificial additives" / "✗ Low quality" (generic, not visceral)
 - comparisonPoints with "ours" (4 positive points with ✓) and "theirs" (4 negative points with ✗)
+  - Each point must be MAX 4 WORDS. Not sentences. Punchy fragments.
+  - ours GOOD: "✓ Ancient botanicals" / "✓ Works in days" / "✓ Zero crash energy" / "✓ Third-party tested"
+  - ours BAD: "✓ Activates AMPK for cellular repair" (too long, too clinical, nobody reads this on an ad)
+  - theirs GOOD: "✗ Synthetic fillers" / "✗ Wears off fast" / "✗ Untested ingredients" / "✗ Crash by noon"
+  - theirs BAD: "✗ Ignoring cognitive and cardiovascular health" (way too long, sounds like a textbook)
+  - STRICT: Count the words. If any point exceeds 4 words, shorten it. Brevity = impact.
 
 ${hasValidRating && hasValidReviews ? `**2 Review/Social proof style ads (type: "review"):**
 - headline: 6-12 words — a BELIEVABLE, SPECIFIC customer testimonial. Must sound like a real person texting their friend, not a marketing department writing copy.
@@ -136,7 +151,7 @@ Respond ONLY with a valid JSON array. Example format:
       body: JSON.stringify({
         model: 'google/gemini-2.5-flash',
         messages: [
-          { role: 'system', content: 'You are a world-class DTC performance creative strategist who writes scroll-stopping ad copy for Meta ads. Your copy has generated $100M+ in revenue for brands like AG1, Grüns, Obvi, and RYZE. You write SHORT, PUNCHY, PROVOCATIVE copy that makes people stop scrolling. Your headlines are clever — they use curiosity gaps, provocative questions, bold claims, or pattern interrupts. You NEVER write generic marketing speak like "Premium Quality" or "Natural Solution." You write like a witty friend giving a real recommendation, not a corporation writing ad copy. Always respond with valid JSON only, no markdown formatting.' },
+          { role: 'system', content: 'You are a world-class DTC performance creative strategist who writes scroll-stopping ad copy for Meta ads. Your copy has generated $100M+ in revenue for brands like AG1, Grüns, Obvi, and RYZE. You write SHORT, PUNCHY, PROVOCATIVE copy that makes people stop scrolling. Your headlines are clever — they use curiosity gaps, provocative questions, bold claims, or pattern interrupts. You NEVER write generic marketing speak like "Premium Quality" or "Natural Solution." You write like a witty friend giving a real recommendation, not a corporation writing ad copy. You also have deep expertise in Meta ads compliance — every headline and piece of copy you write is designed to pass Meta ad review without getting flagged. You never make disease claims, never use "clinically proven" without basis, never create negative self-perception, and always frame health benefits as "supports" or "may help" rather than "cures" or "treats". Always respond with valid JSON only, no markdown formatting.' },
           { role: 'user', content: prompt }
         ],
         temperature: 0.95,
