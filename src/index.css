@@ -1,0 +1,176 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Dark navy theme matching persuasive-pixels-pro.lovable.app exactly */
+    --background: 228 53% 7%;
+    --foreground: 0 0% 100%;
+
+    --card: 228 50% 12%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 228 50% 12%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 246 100% 59%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 228 45% 16%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 228 40% 14%;
+    --muted-foreground: 228 15% 55%;
+
+    --accent: 246 100% 59%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 228 30% 22%;
+    --input: 228 45% 16%;
+    --ring: 246 100% 59%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 228 53% 5%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 246 100% 59%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 228 40% 14%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 228 30% 22%;
+    --sidebar-ring: 246 100% 59%;
+
+    /* Custom brand colors */
+    --brand-glow: 246 100% 59%;
+    --brand-gradient-start: 228 53% 7%;
+    --brand-gradient-end: 246 80% 45%;
+  }
+
+  .dark {
+    /* Dark mode same as root for this theme */
+    --background: 228 53% 7%;
+    --foreground: 0 0% 100%;
+
+    --card: 228 50% 12%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 228 50% 12%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 246 100% 59%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 228 45% 16%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 228 40% 14%;
+    --muted-foreground: 228 15% 55%;
+
+    --accent: 246 100% 59%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 228 30% 22%;
+    --input: 228 45% 16%;
+    --ring: 246 100% 59%;
+    
+    --sidebar-background: 228 53% 5%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 246 100% 59%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 228 40% 14%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 228 30% 22%;
+    --sidebar-ring: 246 100% 59%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom utilities for brand styling */
+@layer utilities {
+  .glow-blue {
+    box-shadow: 0 0 40px hsl(246 100% 59% / 0.3), 0 0 80px hsl(246 100% 59% / 0.15);
+  }
+
+  .gradient-header {
+    background: radial-gradient(ellipse 80% 50% at 50% 0%, hsl(246 100% 40%) 0%, hsl(228 53% 7%) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gradient-glow {
+    background: linear-gradient(
+      135deg,
+      hsl(246 70% 55%) 0%,
+      hsl(280 70% 50%) 100%
+    );
+  }
+
+  .text-gradient {
+    background: linear-gradient(
+      135deg,
+      hsl(210 40% 98%) 0%,
+      hsl(215 20% 75%) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Interactive animations */
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/20;
+  }
+
+  .hover-glow {
+    @apply transition-all duration-300 hover:shadow-lg hover:shadow-primary/30;
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(228 50% 12%) 0%,
+      hsl(228 50% 18%) 50%,
+      hsl(228 50% 12%) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-scale-in {
+    animation: scale-in 0.3s ease-out;
+  }
+
+  @keyframes scale-in {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+}
