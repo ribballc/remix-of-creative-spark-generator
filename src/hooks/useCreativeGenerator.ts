@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { ProductData, AdCopy, AdTemplate, GeneratedCreative, ConfirmedBrandKit } from '@/types/creative';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { compositeImages, CompositingData, compositeProductOnBackdrop } from '@/utils/imageUtils';
 
 interface ProductColors {
   background: string;
@@ -26,9 +25,7 @@ export function useCreativeGenerator() {
   const [adCopies, setAdCopies] = useState<AdCopy[]>([]);
   const [generatedCreatives, setGeneratedCreatives] = useState<GeneratedCreative[]>([]);
   
-  // New states for 4-step flow
   const [productImageBase64, setProductImageBase64] = useState<string | null>(null);
-  const [productCutoutBase64, setProductCutoutBase64] = useState<string | null>(null);
   const [productColors, setProductColors] = useState<ProductColors | null>(null);
   const [confirmedBrandKit, setConfirmedBrandKit] = useState<ConfirmedBrandKit | null>(null);
   const [isAnalyzingImage, setIsAnalyzingImage] = useState(false);
@@ -73,7 +70,6 @@ export function useCreativeGenerator() {
           });
         }
         
-        // Auto-advance to Step 2 (Upload Product Image)
         setLoadingStage('Complete!');
         setStep(2);
       } else {
@@ -146,36 +142,14 @@ export function useCreativeGenerator() {
     }]);
 
     try {
-      const isReviewTemplate = template.type === 'review';
-
-      // === Step A: Remove background ===
-      setLoadingStage('Removing background...');
-      console.log('Step A: Removing product background...');
-      const { data: bgData, error: bgError } = await supabase.functions.invoke('remove-background', {
-        body: { productImageBase64: rawProductImage }
-      });
-      if (bgError) throw bgError;
-      if (!bgData?.success) throw new Error(bgData?.error || 'Background removal failed');
-      const cutoutBase64 = bgData.cutoutBase64;
-      const cutoutUrl = cutoutBase64.startsWith('data:') ? cutoutBase64 : `data:image/png;base64,${cutoutBase64}`;
-      setProductCutoutBase64(cutoutUrl);
-      console.log('Background removed successfully');
-
-      // === Step B: Generate creative ===
+      // Send raw product image directly to generate-creative (no background removal step)
       setLoadingStage('Creating ad creative...');
-      console.log('Step D: Generating creative...');
-
-      // For non-review: send the CUTOUT (transparent bg) to the AI.
-      // The AI prompt already generates a studio backdrop, so sending a cutout
-      // avoids the double-backdrop problem.
-      // For review: the AI skips the product image anyway (product zone is empty),
-      // so we send the cutout for reference but it won't be used in the AI output.
-      const imageForAI = cutoutUrl;
+      console.log('Generating creative with raw product image...');
 
       const { data, error } = await supabase.functions.invoke('generate-creative', {
         body: {
           template,
-          productImageUrl: imageForAI,
+          productImageUrl: rawProductImage,
           referenceImageUrl,
           adCopy: selectedAdCopy,
           productData,
@@ -187,21 +161,6 @@ export function useCreativeGenerator() {
       
       let finalImageUrl = data.imageUrl;
 
-      // If compositing is enabled, layer product onto AI scene
-      if (data.compositing?.enabled) {
-        console.log('Compositing product cutout onto scene...');
-        try {
-          const compositedBase64 = await compositeImages(
-            data.imageUrl,
-            cutoutUrl,
-            data.compositing as CompositingData
-          );
-          finalImageUrl = compositedBase64;
-        } catch (compErr) {
-          console.error('Compositing failed, using AI output as-is:', compErr);
-        }
-      }
-
       // Strip any transparency to avoid white borders — output as solid JPEG
       try {
         const { stripTransparency } = await import('@/utils/imageUtils');
@@ -210,7 +169,6 @@ export function useCreativeGenerator() {
         console.error('Strip transparency failed:', stripErr);
       }
 
-      
       setGeneratedCreatives(prev => prev.map(c => 
         c.id === creativeId 
           ? { ...c, outputImageUrl: finalImageUrl, status: 'completed' as const }
@@ -245,7 +203,6 @@ export function useCreativeGenerator() {
     adCopies,
     generatedCreatives,
     productImageBase64,
-    productCutoutBase64,
     productColors,
     confirmedBrandKit,
     isAnalyzingImage,

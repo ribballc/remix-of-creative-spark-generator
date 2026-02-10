@@ -35,6 +35,7 @@ interface Step3Props {
   onGenerateCreative: (template: AdTemplate, productImageUrl: string, adCopy: AdCopy, referenceImageUrl?: string) => Promise<void>;
   onPrev: () => void;
   productImageBase64?: string | null;
+  loadingStage?: string;
 }
 
 interface UnifiedTemplateCardProps {
@@ -82,7 +83,7 @@ function UnifiedTemplateCard({
         if (templateType === 'features_benefits') {
           return copy.type === 'feature' || copy.type === 'benefit' || copy.type === 'features_benefits';
         }
-        if (templateType === 'benefits') return copy.type === 'benefit';
+        if (templateType === 'benefits') return copy.type === 'benefit' || copy.type === 'features_benefits';
         if (templateType === 'comparison') return copy.type === 'comparison';
         if (templateType === 'review') return copy.type === 'review';
         return false;
@@ -111,7 +112,16 @@ function UnifiedTemplateCard({
           ? await fileToBase64(productImageFile)
           : await imageUrlToBase64(productImageUrl);
       }
-      const referenceBase64 = await imageUrlToBase64(referenceImage);
+      
+      // Reference image conversion with error handling
+      let referenceBase64: string | undefined;
+      try {
+        referenceBase64 = await imageUrlToBase64(referenceImage);
+      } catch (err) {
+        console.warn('Could not convert reference image, proceeding without it:', err);
+        referenceBase64 = undefined;
+      }
+      
       await onGenerate(template, productBase64, relevantCopies[parseInt(selectedCopyIndex)], referenceBase64);
     } finally {
       setIsGenerating(false);
@@ -125,7 +135,6 @@ function UnifiedTemplateCard({
   if (disabled) {
     return (
       <div className="bg-card/50 border border-border rounded-2xl overflow-hidden opacity-60">
-        {/* Header */}
         <div className="px-6 py-4 border-b border-border bg-secondary/20">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -137,8 +146,6 @@ function UnifiedTemplateCard({
             </div>
           </div>
         </div>
-
-        {/* Disabled Content */}
         <div className="p-6">
           <div className="flex items-center justify-center gap-4 py-8">
             <div className="text-center">
@@ -154,6 +161,24 @@ function UnifiedTemplateCard({
       </div>
     );
   }
+
+  const handleDownload = () => {
+    const url = latestCreative?.outputImageUrl;
+    if (url) {
+      fetch(url)
+        .then(res => res.blob())
+        .then(blob => {
+          const blobUrl = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = blobUrl;
+          link.download = `creative-${template.id}-${Date.now()}.jpg`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(blobUrl);
+        });
+    }
+  };
 
   return (
     <div className="bg-card border border-border rounded-2xl overflow-hidden">
@@ -195,15 +220,16 @@ function UnifiedTemplateCard({
 
       {/* Content */}
       <div className="p-6">
-        {/* Image Preview Row - Equal sizes, full width */}
-        <div className="flex items-center justify-between gap-4 mb-6">
+        {/* Image Preview Row - Stacks on mobile */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
           {/* Reference Image */}
-          <div className="flex-1 space-y-2">
+          <div className="flex-1 w-full space-y-2">
             <Label className="text-xs text-muted-foreground uppercase tracking-wider text-center block">Reference</Label>
             <div 
               className={cn(
                 "border border-border rounded-xl overflow-hidden bg-secondary/50 mx-auto",
-                aspectRatio === '9:16' ? 'aspect-[9/16]' : 'aspect-square'
+                aspectRatio === '9:16' ? 'aspect-[9/16]' : 'aspect-square',
+                "sm:max-w-none max-w-[200px]"
               )}
             >
               <img
@@ -215,17 +241,18 @@ function UnifiedTemplateCard({
           </div>
 
           {/* Plus Sign */}
-          <div className="text-2xl font-bold text-primary mt-6 shrink-0">+</div>
+          <div className="text-2xl font-bold text-primary sm:mt-6 shrink-0">+</div>
 
           {/* Product Image */}
-          <div className="flex-1 space-y-2">
+          <div className="flex-1 w-full space-y-2">
             <Label className="text-xs text-muted-foreground uppercase tracking-wider text-center block">Product</Label>
             <div 
               className={cn(
                 "border rounded-xl flex items-center justify-center bg-secondary/30 relative overflow-hidden transition-colors mx-auto",
                 hasGlobalImage ? "border-primary/50" : "border-2 border-dashed",
                 !hasGlobalImage && (productImageUrl ? "border-primary/50" : "border-border hover:border-primary/30"),
-                aspectRatio === '9:16' ? 'aspect-[9/16]' : 'aspect-square'
+                aspectRatio === '9:16' ? 'aspect-[9/16]' : 'aspect-square',
+                "sm:max-w-none max-w-[200px]"
               )}
             >
               {hasGlobalImage ? (
@@ -267,15 +294,16 @@ function UnifiedTemplateCard({
           </div>
 
           {/* Equals Sign */}
-          <div className="text-2xl font-bold text-primary mt-6 shrink-0">=</div>
+          <div className="text-2xl font-bold text-primary sm:mt-6 shrink-0">=</div>
 
           {/* Output Creative */}
-          <div className="flex-1 space-y-2">
+          <div className="flex-1 w-full space-y-2">
             <Label className="text-xs text-muted-foreground uppercase tracking-wider text-center block">Output</Label>
             <div 
               className={cn(
                 "border border-border rounded-xl flex items-center justify-center bg-gradient-to-br from-secondary/50 to-muted/50 overflow-hidden relative mx-auto",
-                aspectRatio === '9:16' ? 'aspect-[9/16]' : 'aspect-square'
+                aspectRatio === '9:16' ? 'aspect-[9/16]' : 'aspect-square',
+                "sm:max-w-none max-w-[200px]"
               )}
             >
               {latestCreative?.status === 'completed' ? (
@@ -289,18 +317,8 @@ function UnifiedTemplateCard({
                   <Button
                     size="icon"
                     variant="secondary"
-                    className="absolute bottom-2 right-2 h-7 w-7 rounded-lg shadow-lg"
-                    onClick={() => {
-                      const url = latestCreative.outputImageUrl;
-                      if (url) {
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.download = `creative-${template.id}-${Date.now()}.jpg`;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                      }
-                    }}
+                    className="absolute bottom-2 right-2 h-7 w-7 rounded-lg shadow-lg z-20"
+                    onClick={handleDownload}
                   >
                     <Download className="w-3.5 h-3.5" />
                   </Button>
@@ -309,6 +327,12 @@ function UnifiedTemplateCard({
                 <div className="flex flex-col items-center gap-2">
                   <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
                   <span className="text-xs text-muted-foreground">Generating...</span>
+                </div>
+              ) : latestCreative?.status === 'error' ? (
+                <div className="flex flex-col items-center gap-2 p-3">
+                  <AlertCircle className="w-6 h-6 text-destructive" />
+                  <span className="text-xs text-destructive font-medium">Generation failed</span>
+                  <span className="text-xs text-muted-foreground">Click Generate to retry</span>
                 </div>
               ) : (
                 <div className="text-center p-3">
@@ -355,7 +379,6 @@ function UnifiedTemplateCard({
                           {copy.subheadline_primary || copy.subheadline}
                         </span>
                       )}
-                      {/* Show feature_benefits callouts for new format */}
                       {copy.feature_benefits && copy.feature_benefits.length > 0 && (
                         <div className="flex flex-col gap-0.5 mt-1 pl-1 border-l-2 border-primary/30">
                           {copy.feature_benefits.slice(0, 4).map((fb, i) => (
@@ -365,7 +388,6 @@ function UnifiedTemplateCard({
                           ))}
                         </div>
                       )}
-                      {/* Fallback to bulletPoints for legacy data */}
                       {!copy.feature_benefits && copy.bulletPoints && copy.bulletPoints.length > 0 && (
                         <div className="flex flex-col gap-0.5 mt-1 pl-1 border-l-2 border-primary/30">
                           {copy.bulletPoints.slice(0, 4).map((point, i) => (
@@ -408,12 +430,21 @@ function UnifiedTemplateCard({
   );
 }
 
-export function Step3AdTemplates({ adCopies, generatedCreatives, onGenerateCreative, onPrev, productImageBase64 }: Step3Props) {
-  // Check if reviews are available
+export function Step3AdTemplates({ adCopies, generatedCreatives, onGenerateCreative, onPrev, productImageBase64, loadingStage }: Step3Props) {
   const hasReviews = Array.isArray(adCopies) && adCopies.some(copy => copy.type === 'review');
+  const hasComparison = Array.isArray(adCopies) && adCopies.some(copy => copy.type === 'comparison');
+  const hasBenefits = Array.isArray(adCopies) && adCopies.some(copy => copy.type === 'benefit' || copy.type === 'features_benefits');
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* Loading stage banner */}
+      {loadingStage && (
+        <div className="flex items-center justify-center gap-2 py-3 px-4 bg-primary/10 border border-primary/20 rounded-xl mb-4">
+          <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm text-primary font-medium">{loadingStage}</span>
+        </div>
+      )}
+
       <UnifiedTemplateCard
         templateType="features_benefits"
         title="Features & Benefits"
@@ -421,6 +452,18 @@ export function Step3AdTemplates({ adCopies, generatedCreatives, onGenerateCreat
         adCopies={adCopies}
         onGenerate={onGenerateCreative}
         generatedCreatives={generatedCreatives}
+        globalProductImage={productImageBase64}
+      />
+
+      <UnifiedTemplateCard
+        templateType="comparison"
+        title="Us vs Them"
+        description="Side-by-side comparison highlighting your advantages"
+        adCopies={adCopies}
+        onGenerate={onGenerateCreative}
+        generatedCreatives={generatedCreatives}
+        disabled={!hasComparison}
+        disabledReason="No comparison data generated"
         globalProductImage={productImageBase64}
       />
 
@@ -436,6 +479,18 @@ export function Step3AdTemplates({ adCopies, generatedCreatives, onGenerateCreat
         globalProductImage={productImageBase64}
       />
 
+      <UnifiedTemplateCard
+        templateType="benefits"
+        title="Pure Benefits"
+        description="Focus purely on product benefits with clean layout"
+        adCopies={adCopies}
+        onGenerate={onGenerateCreative}
+        generatedCreatives={generatedCreatives}
+        disabled={!hasBenefits}
+        disabledReason="No benefit copy generated"
+        globalProductImage={productImageBase64}
+      />
+
       <div className="pt-4">
         <Button 
           variant="outline" 
@@ -443,7 +498,7 @@ export function Step3AdTemplates({ adCopies, generatedCreatives, onGenerateCreat
           className="h-11 px-6 rounded-xl font-medium"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Step 1
+          Back
         </Button>
       </div>
     </div>

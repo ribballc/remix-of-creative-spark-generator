@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Upload, ImagePlus, Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { imageUrlToBase64 } from '@/utils/imageUtils';
 
 interface ProductColors {
   background: string;
@@ -16,7 +17,6 @@ interface Step2Props {
   isLoading: boolean;
   productColors: ProductColors | null;
   productImageBase64: string | null;
-  productCutoutBase64: string | null;
   onAnalyze: (base64: string) => Promise<void>;
   onNext: () => void;
   onPrev: () => void;
@@ -27,7 +27,6 @@ export function Step2UploadProduct({
   isLoading,
   productColors,
   productImageBase64,
-  productCutoutBase64,
   onAnalyze,
   onNext,
   onPrev,
@@ -36,6 +35,9 @@ export function Step2UploadProduct({
     productImageBase64 || initialImages?.[0] || ''
   );
   const [isDragging, setIsDragging] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
+    productImageBase64 ? null : (initialImages?.length > 0 ? 0 : null)
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = async (file: File) => {
@@ -43,6 +45,7 @@ export function Step2UploadProduct({
     reader.onload = async (e) => {
       const base64 = e.target?.result as string;
       setPreviewUrl(base64);
+      setSelectedImageIndex(null);
       await onAnalyze(base64);
     };
     reader.readAsDataURL(file);
@@ -67,18 +70,34 @@ export function Step2UploadProduct({
 
   const handleDragLeave = () => setIsDragging(false);
 
+  const handleSelectScrapedImage = async (imageUrl: string, index: number) => {
+    setPreviewUrl(imageUrl);
+    setSelectedImageIndex(index);
+    try {
+      const base64 = await imageUrlToBase64(imageUrl);
+      await onAnalyze(base64);
+    } catch (err) {
+      console.error('Failed to convert scraped image to base64:', err);
+    }
+  };
+
   const colorLabels: { key: keyof ProductColors; label: string }[] = [
     { key: 'background', label: 'Background' },
     { key: 'accent', label: 'Accent' },
     { key: 'text', label: 'Text' },
   ];
 
+  const hasScrapedImages = initialImages && initialImages.length > 0;
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="bg-card border border-border rounded-2xl p-6">
         <h3 className="text-lg font-semibold text-foreground mb-1">Upload Product Image</h3>
         <p className="text-sm text-muted-foreground mb-6">
-          Upload a clean product photo. We'll extract colors from the packaging to build your brand kit.
+          {hasScrapedImages 
+            ? 'Select a scraped image below or upload your own. We\'ll extract colors from the packaging to build your brand kit.'
+            : 'Upload a clean product photo. We\'ll extract colors from the packaging to build your brand kit.'
+          }
         </p>
 
         {/* Upload area */}
@@ -120,6 +139,36 @@ export function Step2UploadProduct({
             className="hidden"
           />
         </div>
+
+        {/* Scraped image thumbnails */}
+        {hasScrapedImages && (
+          <div className="mt-4">
+            <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wider font-medium">Scraped Images</p>
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              {initialImages.map((imgUrl, index) => (
+                <button
+                  key={index}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSelectScrapedImage(imgUrl, index);
+                  }}
+                  className={cn(
+                    "shrink-0 w-16 h-16 rounded-lg border-2 overflow-hidden transition-all duration-200 hover:scale-105",
+                    selectedImageIndex === index
+                      ? "border-primary ring-2 ring-primary/20"
+                      : "border-border hover:border-primary/40"
+                  )}
+                >
+                  <img
+                    src={imgUrl}
+                    alt={`Product ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Loading state */}
         {isLoading && (

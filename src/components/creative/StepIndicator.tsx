@@ -3,10 +3,9 @@ import { Check } from 'lucide-react';
 
 interface StepIndicatorProps {
   currentStep: number;
-  totalSteps: number;
 }
 
-export function StepIndicator({ currentStep, totalSteps }: StepIndicatorProps) {
+export function StepIndicator({ currentStep }: StepIndicatorProps) {
   const steps = [
     { number: 1, title: 'Scan Product' },
     { number: 2, title: 'Upload Image' },

@@ -160,6 +160,7 @@ serve(async (req) => {
 
     const data = await response.json();
     console.log('Lovable AI response received');
+    console.log('Full AI response structure:', JSON.stringify(Object.keys(data.choices?.[0]?.message || {})));
 
     // Check for errors embedded in the response
     const choiceError = data.choices?.[0]?.error;
@@ -180,8 +181,12 @@ serve(async (req) => {
       );
     }
 
-    // Extract image URL from response
-    const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    // Extract image URL from response with fallbacks
+    const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url
+      || (Array.isArray(data.choices?.[0]?.message?.content) 
+          ? data.choices[0].message.content.find((c: any) => c.type === 'image')?.image_url?.url 
+          : null)
+      || null;
 
     if (!imageUrl) {
       console.error('No image in response:', JSON.stringify(data, null, 2));
@@ -195,9 +200,16 @@ serve(async (req) => {
 
     // Save to gallery in background
     const productTitle = productData?.title || 'Unknown Product';
-    EdgeRuntime.waitUntil(
-      saveCreativeToGallery(imageUrl, template.id, productTitle)
-    );
+    try {
+      EdgeRuntime.waitUntil(
+        saveCreativeToGallery(imageUrl, template.id, productTitle)
+      );
+    } catch {
+      // Fallback: save without EdgeRuntime if not available
+      saveCreativeToGallery(imageUrl, template.id, productTitle).catch(err =>
+        console.error('Background save failed:', err)
+      );
+    }
 
     // AI now integrates the product directly — no programmatic compositing needed
     const responsePayload: Record<string, unknown> = { success: true, imageUrl };
