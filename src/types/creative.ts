@@ -90,7 +90,7 @@ export interface AdTemplate {
   id: string;
   name: string;
   type: 'features_benefits' | 'comparison' | 'review' | 'benefits';
-  aspectRatio: '9:16' | '1:1';
+  aspectRatio: '9:16' | '1:1' | '4:5';
   description: string;
 }
 
@@ -112,6 +112,13 @@ export const AD_TEMPLATES: AdTemplate[] = [
     description: 'Highlight key features and benefits in vertical format'
   },
   {
+    id: 'features_benefits_45',
+    name: 'Features & Benefits',
+    type: 'features_benefits',
+    aspectRatio: '4:5',
+    description: 'Optimal format for Meta feed posts (4:5)'
+  },
+  {
     id: 'features_benefits_11',
     name: 'Features & Benefits',
     type: 'features_benefits',
@@ -124,6 +131,13 @@ export const AD_TEMPLATES: AdTemplate[] = [
     type: 'comparison',
     aspectRatio: '9:16',
     description: 'Us vs Them comparison in vertical'
+  },
+  {
+    id: 'comparison_45',
+    name: 'Comparison',
+    type: 'comparison',
+    aspectRatio: '4:5',
+    description: 'Us vs Them comparison for Meta feed (4:5)'
   },
   {
     id: 'comparison_11',
@@ -140,6 +154,13 @@ export const AD_TEMPLATES: AdTemplate[] = [
     description: 'Social proof with customer testimonials'
   },
   {
+    id: 'review_45',
+    name: 'Customer Review',
+    type: 'review',
+    aspectRatio: '4:5',
+    description: 'Customer review for Meta feed (4:5)'
+  },
+  {
     id: 'review_11',
     name: 'Customer Review',
     type: 'review',
@@ -152,6 +173,13 @@ export const AD_TEMPLATES: AdTemplate[] = [
     type: 'benefits',
     aspectRatio: '9:16',
     description: 'Focus purely on product benefits'
+  },
+  {
+    id: 'benefits_45',
+    name: 'Pure Benefits',
+    type: 'benefits',
+    aspectRatio: '4:5',
+    description: 'Benefit-focused Meta feed ad (4:5)'
   },
   {
     id: 'benefits_11',
