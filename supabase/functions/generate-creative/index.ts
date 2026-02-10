@@ -284,6 +284,11 @@ HEADLINE STYLE (APPLIES TO ALL TEMPLATES):
 - The review template headline style is the reference: bold serif or sans-serif text, large, floating cleanly on a rich background with no UI elements around it.
 - This rule also applies to subheadlines — no containers, no pills, no boxes.
 
+NUMBER FORMATTING (MANDATORY):
+- ALL numbers 1,000 or greater MUST include commas (e.g., 1,000 — 10,000 — 100,000 — 1,000,000).
+- NEVER render a number like "10000" or "1000" without a comma. Always "10,000" and "1,000".
+- This applies to review counts, customer counts, dosages, and any numeric text in the ad.
+
 OUTPUT: EXACTLY ${canvasSize} pixels. ${dimensions}.`;
 }
 
@@ -385,8 +390,9 @@ function buildReviewPrompt(adCopy: AdCopyInput, aspectRatio: string, canvasSize:
   const reviewCountRaw = adCopy.reviewCount || '0';
   const reviewCountNum = parseInt(reviewCountRaw.replace(/[^0-9]/g, ''));
   const showReviewCount = reviewCountNum >= 500;
+  const formattedReviewCount = reviewCountNum.toLocaleString('en-US');
   const ratingLine = showReviewCount
-    ? `Rated ${actualRating}/5 by ${adCopy.reviewCount}+ customers`
+    ? `Rated ${actualRating}/5 by ${formattedReviewCount}+ customers`
     : adCopy.subheadline || `★★★★★ ${actualRating}/5`;
 
   // Ensure headline is complete
