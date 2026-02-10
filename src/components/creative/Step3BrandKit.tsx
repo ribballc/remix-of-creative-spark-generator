@@ -40,25 +40,40 @@ export function Step3BrandKit({
   const productBody = detectedFonts?.body?.[0] || null;
 
   const [headingFont, setHeadingFont] = useState(
-    websiteHeading || productHeading || 'Sans-serif'
+    websiteHeading || productHeading || 'Match product packaging'
   );
   const [bodyFont, setBodyFont] = useState(
-    websiteBody || productBody || headingFont
+    websiteBody || productBody || 'Clean sans-serif'
   );
   const [logoUrl, setLogoUrl] = useState(logo || '');
   const logoInputRef = useRef<HTMLInputElement>(null);
 
   // Build font options from website stacks + product-detected fonts + current selection
+  const commonHeadingStyles = [
+    'Match product packaging',
+    'Modern geometric sans-serif',
+    'Elegant serif',
+    'Bold condensed sans-serif',
+    'Clean minimal sans-serif',
+  ];
+  const commonBodyStyles = [
+    'Clean sans-serif',
+    'Modern readable sans-serif',
+    'Elegant serif body',
+  ];
+
   const headingOptions = Array.from(new Set([
     headingFont,
     ...(typography?.fontStacks?.heading || []),
     ...(detectedFonts?.heading || []),
+    ...commonHeadingStyles,
   ].filter(Boolean))) as string[];
 
   const bodyOptions = Array.from(new Set([
     bodyFont,
     ...(typography?.fontStacks?.body || []),
     ...(detectedFonts?.body || []),
+    ...commonBodyStyles,
   ].filter(Boolean))) as string[];
 
   const handleColorChange = (key: keyof typeof colors, value: string) => {

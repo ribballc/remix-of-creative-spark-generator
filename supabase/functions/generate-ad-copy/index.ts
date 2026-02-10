@@ -89,6 +89,7 @@ Each must include:
   - GOOD: "Us vs 'Quick Fix' Detoxes" / "This vs Your Medicine Cabinet" / "Real Food vs Lab Food"
   - BAD: "Us vs The Competition" / "Our Product vs Others" (too vague, zero personality)
 - NO subheadline needed
+- DEDUPLICATION RULE: Every comparison point (both "us" and "them") must be UNIQUE. NEVER repeat the same point or a close paraphrase. Each "ours" point must cover a DIFFERENT benefit. Each "theirs" must highlight a DIFFERENT weakness. Before finalizing, verify no two points say the same thing.
 - comparisonPoints with "ours" (4 positive points with ✓) and "theirs" (4 negative points with ✗)
   - Each point must be MAX 4 WORDS. Not sentences. Punchy fragments.
   - ours GOOD: "✓ Ancient botanicals" / "✓ Works in days" / "✓ Zero crash energy" / "✓ Third-party tested"
