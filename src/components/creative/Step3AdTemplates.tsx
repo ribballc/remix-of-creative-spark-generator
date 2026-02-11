@@ -144,7 +144,7 @@ function UnifiedTemplateCard({
                 className={cn(
                   "px-3 py-1.5 text-sm font-medium rounded-full transition-all",
                   aspectRatio === ratio 
-                    ? "bg-white text-black" 
+                    ? "bg-primary text-primary-foreground" 
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
@@ -291,7 +291,7 @@ function UnifiedTemplateCard({
             onClick={handleGenerate}
             disabled={isGenerating || (!hasGlobalImage && !productImageUrl) || !selectedCopy}
             size="lg"
-            className="h-12 px-6 rounded-full font-semibold gap-2 shrink-0 bg-[hsl(145,100%,41%)] text-black hover:bg-[hsl(145,100%,45%)]"
+            className="h-12 px-6 rounded-full font-semibold gap-2 shrink-0"
           >
             {isGenerating ? (
               <>
@@ -372,7 +372,7 @@ function ConceptCreativeCard({
                 onClick={() => setAspectRatio(ratio)}
                 className={cn(
                   "px-3 py-1.5 text-sm font-medium rounded-full transition-all",
-                  aspectRatio === ratio ? "bg-white text-black" : "text-muted-foreground hover:text-foreground"
+                  aspectRatio === ratio ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {ratio}
@@ -418,7 +418,7 @@ function ConceptCreativeCard({
           )}
         </div>
 
-        <Button onClick={handleGenerate} disabled={isGenerating || !globalProductImage} size="lg" className="w-full h-12 rounded-full font-semibold gap-2 bg-[hsl(145,100%,41%)] text-black hover:bg-[hsl(145,100%,45%)]">
+        <Button onClick={handleGenerate} disabled={isGenerating || !globalProductImage} size="lg" className="w-full h-12 rounded-full font-semibold gap-2">
           {isGenerating ? (
             <>
               <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
@@ -445,9 +445,9 @@ export function Step3AdTemplates({ adCopies, generatedCreatives, onGenerateCreat
   return (
     <div className="space-y-6 animate-fade-in">
       {loadingStage && (
-      <div className="flex items-center justify-center gap-2 py-3 px-4 bg-accent/10 border border-accent/20 rounded-xl">
-          <div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm text-accent font-medium">{loadingStage}</span>
+      <div className="flex items-center justify-center gap-2 py-3 px-4 bg-primary/10 border border-primary/20 rounded-xl">
+          <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm text-primary font-medium">{loadingStage}</span>
         </div>
       )}
 
