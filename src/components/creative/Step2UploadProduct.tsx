@@ -110,10 +110,10 @@ export function Step2UploadProduct({
             "relative border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 overflow-hidden",
             "flex items-center justify-center",
             isDragging
-              ? "border-accent bg-accent/5"
+              ? "border-primary bg-primary/5"
               : previewUrl
-              ? "border-accent/40"
-              : "border-border hover:border-border hover:bg-secondary/30",
+              ? "border-primary/40"
+              : "border-border hover:border-primary/30 hover:bg-secondary/30",
             "aspect-square max-w-sm mx-auto"
           )}
         >
@@ -155,8 +155,8 @@ export function Step2UploadProduct({
                   className={cn(
                     "shrink-0 w-16 h-16 rounded-lg border-2 overflow-hidden transition-all duration-200 hover:scale-105",
                     selectedImageIndex === index
-                      ? "border-accent ring-2 ring-accent/20"
-                      : "border-border hover:border-border"
+                      ? "border-primary ring-2 ring-primary/20"
+                      : "border-border hover:border-primary/40"
                   )}
                 >
                   <img
@@ -173,7 +173,7 @@ export function Step2UploadProduct({
         {/* Loading state */}
         {isLoading && (
           <div className="flex items-center justify-center gap-3 mt-6 py-4">
-            <Loader2 className="w-5 h-5 animate-spin text-accent" />
+            <Loader2 className="w-5 h-5 animate-spin text-primary" />
             <span className="text-sm text-muted-foreground">Extracting colors...</span>
           </div>
         )}
@@ -199,14 +199,14 @@ export function Step2UploadProduct({
 
       {/* Navigation */}
       <div className="flex justify-between">
-        <Button variant="outline" onClick={onPrev} className="h-11 px-6 rounded-full font-medium">
+        <Button variant="outline" onClick={onPrev} className="h-11 px-6 rounded-xl font-medium">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back
         </Button>
         <Button
           onClick={onNext}
           disabled={!productColors || isLoading}
-          className="h-11 px-6 rounded-full font-medium"
+          className="h-11 px-6 rounded-xl font-medium"
         >
           Continue
           <ArrowRight className="w-4 h-4 ml-2" />

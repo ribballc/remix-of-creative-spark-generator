@@ -115,7 +115,7 @@ export function Step3BrandKit({
     <div className="space-y-6 animate-fade-in">
       <div className="bg-card border border-border rounded-2xl p-6">
         <div className="flex items-center gap-2 mb-1">
-          <Palette className="w-5 h-5 text-accent" />
+          <Palette className="w-5 h-5 text-primary" />
           <h3 className="text-lg font-semibold text-foreground">Brand Kit</h3>
         </div>
         <p className="text-sm text-muted-foreground mb-6">
@@ -214,7 +214,7 @@ export function Step3BrandKit({
             </div>
             <div
               onClick={() => logoInputRef.current?.click()}
-              className="bg-secondary/30 rounded-lg p-3 border border-border flex items-center justify-center h-20 cursor-pointer hover:border-border transition-colors relative group"
+              className="bg-secondary/30 rounded-lg p-3 border border-border flex items-center justify-center h-20 cursor-pointer hover:border-primary/40 transition-colors relative group"
             >
               {logoUrl ? (
                 <>
@@ -253,11 +253,11 @@ export function Step3BrandKit({
 
       {/* Navigation */}
       <div className="flex justify-between">
-        <Button variant="outline" onClick={onPrev} className="h-11 px-6 rounded-full font-medium">
+        <Button variant="outline" onClick={onPrev} className="h-11 px-6 rounded-xl font-medium">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back
         </Button>
-        <Button onClick={handleConfirm} className="h-11 px-6 rounded-full font-medium">
+        <Button onClick={handleConfirm} className="h-11 px-6 rounded-xl font-medium">
           Confirm & Generate
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>

@@ -22,9 +22,9 @@ export function StepIndicator({ currentStep }: StepIndicatorProps) {
               className={cn(
                 'w-11 h-11 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-500 ease-out',
                 currentStep > step.number
-                  ? 'bg-[hsl(145,100%,41%)] text-black scale-100'
+                  ? 'bg-primary text-primary-foreground scale-100'
                   : currentStep === step.number
-                  ? 'bg-white text-black ring-4 ring-white/20 scale-110 shadow-lg shadow-white/10'
+                  ? 'bg-primary text-primary-foreground ring-4 ring-primary/20 scale-110 shadow-lg shadow-primary/30'
                   : 'bg-secondary text-muted-foreground hover:bg-secondary/80 hover:scale-105'
               )}
             >
@@ -43,7 +43,7 @@ export function StepIndicator({ currentStep }: StepIndicatorProps) {
               className={cn(
                 'mt-2 text-xs font-medium transition-all duration-300',
                 currentStep > step.number
-                  ? 'text-[hsl(145,100%,41%)]'
+                  ? 'text-primary'
                   : currentStep === step.number
                   ? 'text-foreground font-semibold'
                   : 'text-muted-foreground group-hover:text-foreground/70'
@@ -58,8 +58,8 @@ export function StepIndicator({ currentStep }: StepIndicatorProps) {
               <div className="absolute inset-0 bg-secondary rounded-full" />
               <div 
                 className={cn(
-                  "absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out",
-                  currentStep > step.number ? "w-full bg-[hsl(145,100%,41%)]" : "w-0"
+                  "absolute inset-y-0 left-0 bg-primary rounded-full transition-all duration-500 ease-out",
+                  currentStep > step.number ? "w-full" : "w-0"
                 )}
               />
             </div>

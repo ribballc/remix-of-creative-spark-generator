@@ -133,7 +133,7 @@ export function CreativeGenerator() {
 
 function FeatureBadge({ text }: { text: string }) {
   return (
-    <div className="inline-flex items-center px-5 py-2.5 bg-secondary border border-border/50 rounded-full text-sm font-semibold text-foreground transition-all duration-300 hover:bg-secondary/80 hover:border-border hover:scale-105 cursor-default">
+    <div className="inline-flex items-center px-5 py-2.5 bg-secondary border border-border rounded-full text-sm font-semibold text-foreground transition-all duration-300 hover:bg-secondary/80 hover:border-primary/30 hover:scale-105 cursor-default">
       {text}
     </div>
   );
