@@ -386,36 +386,135 @@ OUTPUT: EXACTLY ${canvasSize} pixels. ${dimensions}.`;
 
 function buildConceptPrompt(adCopy: AdCopyInput, aspectRatio: string, canvasSize: string, dimensions: string, brand: BrandValues, productData?: any): string {
   const productTitle = productData?.title || 'product';
-  const productBenefits = productData?.benefits?.slice(0, 4)?.join(', ') || 'general wellness';
-  const productFeatures = productData?.features?.slice(0, 4)?.join(', ') || '';
-  const productCategory = productData?.description?.substring(0, 200) || '';
+  const productBenefits = productData?.benefits?.slice(0, 5)?.join(', ') || 'general wellness';
+  const productFeatures = productData?.features?.slice(0, 5)?.join(', ') || '';
+  const productCategory = productData?.description?.substring(0, 300) || '';
+  const productPrice = productData?.price || '';
+  const safeZone = '40px';
 
-  return `You are an award-winning creative director. Generate a completely unique ${aspectRatio} cinematic advertisement. EXACTLY ${canvasSize} pixels (${dimensions}). FULL-BLEED — no borders/frames.
+  return `You are the most awarded creative director in DTC advertising. You've made ads for brands like Liquid Death, Oatly, Dollar Shave Club, and Surreal Cereal. You think in IDEAS first, visuals second. Your ads make people screenshot them and send to friends.
 
-PRODUCT CONTEXT (inspire your concept — do NOT list as text):
-- Product: ${productTitle}
+PRODUCT TO ADVERTISE:
+- Name: ${productTitle}
 - Benefits: ${productBenefits}
 - Features: ${productFeatures}
-- Category: ${productCategory}
-- Brand colors: ${brand.bgColor}, accent ${brand.accentColor}
+- Description: ${productCategory}
+${productPrice ? `- Price: ${productPrice}` : ''}
+- Brand colors: ${brand.bgColor} (background), ${brand.accentColor} (accent)
 
-YOUR TASK: Invent a UNIQUE visual concept — a clever, cinematic scene that metaphorically communicates what this product does. Every generation must be completely different.
+STUDY THE ATTACHED PRODUCT IMAGE CAREFULLY. You need to:
+1. Understand what this product looks like physically
+2. Match the typography style from the packaging
+3. Use the brand's color palette as your guide
+4. Reproduce the product accurately in your scene
 
-CONCEPT DIRECTION — pick ONE randomly:
-1. METAPHOR: Real-world object mirroring the benefit (chess board, gas gauge on EMPTY, cracked trophy, hourglass, lab beakers, rusted vs polished gears)
-2. CONTRAST: Two halves showing problem vs solution (chemical label vs clean ingredient, wilting vs thriving plant, cluttered cabinet vs single product)
-3. ENVIRONMENT: Product in atmospheric setting communicating purpose (moody nightstand, gym locker with steam, sunlit kitchen, golden hour trail)
+YOUR TASK: Generate a ${aspectRatio} advertisement with a BRILLIANT creative concept.
 
-PHOTOGRAPHIC REALISM (must NOT look AI-generated):
-- Look like a PHOTOGRAPH from a real shoot. One clear key light, natural shadows, realistic textures (wood grain, glass, metal patina). Cinematic muted color grading. Asymmetric composition. Shallow DOF. Subtle atmosphere (dust, haze). Small imperfections for realism. NO waxy surfaces, NO symmetric floating objects, NO oversaturation.
+BEFORE you design anything, you must FIRST come up with a CREATIVE IDEA — a conceptual hook that makes this ad memorable. Then build the visual around that idea.
 
-PRODUCT: Attached image is the HERO (15-25% canvas). Sharp, well-lit, label readable. Sits naturally in scene (on surface/shelf) — NOT floating. Packaging accurate.
+HERE ARE THE CREATIVE FRAMEWORKS (pick ONE randomly — genuinely randomize, don't default to the same one):
 
-TYPOGRAPHY: Match font style from product packaging.
-- HEADLINE: 2-6 words, ALL CAPS, bold. Clever + intriguing, ties the metaphor. NOT generic ("Premium Quality") or aggressive ("Stop Poisoning Yourself"). YES: "THE AGING GAME.", "RUNNING ON FUMES.", "DATE NIGHT SHOULD WORK." Top 20-25%.
-- EDUCATION LINE: 1 short sentence below headline, lighter weight, max 12 words.
-- OPTIONAL PILLS: 2-3 keyword badges at bottom (e.g., "HEALTHY AGING | BRAIN SUPPORT"), small, semi-transparent. Skip if not needed.
+FRAMEWORK 1 — ABSURD VISUAL METAPHOR
+Take the product's core benefit and visualize it through something IMPOSSIBLE or SURREAL that could never exist in real life. The more unexpected the better.
+- If product helps with AGING → What if aging was a chess match and the product is the winning move? What if wrinkles were cracks in a wall being repaired by tiny painters? What if gray hair was wires being replaced with fiber optics?
+- If product helps with ENERGY → What if a human battery had a low charge indicator? What if someone was plugging themselves into a wall outlet? What if a gas station pumped the product instead of fuel?
+- If product helps with SKIN → What if skin was a canvas being painted by tiny artists? What if pores were volcanoes being sealed? What if the product was served at a fancy restaurant on a silver platter to your face?
+- If product helps with DIGESTION → What if the gut was a garden being tended? What if bloating was a balloon animal that the product deflates? What if the product was a tiny plumber fixing pipes inside a body?
+- If product is for PETS → What if the pet was a food critic at a fancy restaurant? What if the pet was a CEO running a board meeting about their dinner? What if the product fell from the sky like manna?
+The KEY: it must be a visual you've NEVER seen before. If you've seen it in a stock photo, it's not creative enough.
 
-CONTRAST: White text + shadow on dark scenes. Dark text on light. NEVER blend text into background.
-SAFE ZONES: 40px padding. OUTPUT: EXACTLY ${canvasSize} pixels.`;
+FRAMEWORK 2 — CLEVER OBJECT PLAY
+Place the product INTO, ONTO, or NEXT TO a real-world object in a way that creates a visual PUNCHLINE — a moment of "oh that's clever."
+- Product frozen inside an ice block ("break glass in case of emergency")
+- Product balancing on a tightrope between two problems it solves
+- Product emerging from a cracked egg like it was born
+- Product sitting in a museum display case with a "priceless" label
+- Product used as the weight on a balance scale against a pile of competitor bottles
+- Product placed inside a first aid kit as the only item
+- Product as the last piece of a jigsaw puzzle clicking into place
+The KEY: the object interaction must CREATE A MEANING. It's not just "product next to an hourglass." It's "product INSIDE the hourglass replacing the sand."
+
+FRAMEWORK 3 — SCENE THAT TELLS A MICRO-STORY
+Create a single image that implies a before, during, or after — a frozen moment in a story the viewer's brain completes.
+- Someone reaching for the product on a shelf while their other hand drops a competitor in a trash can
+- A medicine cabinet with everything crossed out except the product
+- A "breaking news" TV screen format announcing the product
+- A dating profile for the product ("likes: long walks, clean ingredients. Dislikes: fillers")
+- A product lineup where every other product is grey/faded and only this one is in color
+- An "employee of the month" wall where the product's photo is in every frame
+The KEY: the viewer should FEEL something — humor, surprise, recognition, "that's so true."
+
+FRAMEWORK 4 — SCALE PLAY / PERSPECTIVE TRICK
+Use dramatic scale differences to create visual impact.
+- GIANT product towering over a tiny cityscape
+- TINY people climbing the product like a mountain
+- Product held between two fingers against a massive landscape
+- Macro close-up of the product's texture/ingredients with tiny people exploring it
+- Product as a building in a skyline
+- Product casting a shadow that reveals what it does (shadow shaped like a shield, a brain, a heart, etc.)
+The KEY: the scale shift must feel intentional and meaningful, not random.
+
+FRAMEWORK 5 — CULTURAL MASHUP / FORMAT HIJACK
+Borrow a visual format people already recognize and insert the product into it.
+- Movie poster style (dramatic lighting, credits at bottom)
+- Mugshot format ("wanted: for making other supplements obsolete")
+- Recipe card format but the "recipe" is just "Step 1: take this. Step 2: feel amazing."
+- Nutrition label format but ENORMOUS, comparing to competitors
+- Text message screenshot between two people discussing the product
+- Social media post format (Instagram story, tweet, etc.)
+- Museum exhibition placard next to the product
+The KEY: the borrowed format must be instantly recognizable AND create humor or intrigue when the product is inserted.
+
+CRITICAL CREATIVE RULES:
+1. THE IDEA COMES FIRST. If you can't describe the concept in one sentence that makes someone smile or think "that's clever," the idea isn't strong enough. Start over.
+2. NEVER use the most obvious metaphor. Hourglass for aging? Too obvious. Clock for time? Too obvious. Brain for thinking? Too obvious. Go TWO LEVELS DEEPER. What's an unexpected way to show aging? A crumbling sandcastle being rebuilt. A vintage car getting a fresh coat of paint. A phoenix. A software update downloading on a human.
+3. THE PRODUCT MUST BE THE HERO. The concept SERVES the product, not the other way around. The product should be the most prominent, sharpest, best-lit element in the scene.
+4. HUMOR > DRAMA. Clever and witty beats dark and moody 4 out of 5 times. The best DTC ads make you smile, not worry.
+5. SPECIFICITY > GENERALITY. "Socks frozen in an ice block" is better than "cold weather socks." "Tiny people climbing on teeth" is better than "dental care." The more SPECIFIC and DETAILED the concept, the better.
+
+HEADLINE RULES:
+- 2-8 words. Punchy. Has personality.
+- The headline should COMPLETE the visual concept — scene + headline together tell the full story
+- Has a voice. Could be witty, deadpan, confident, cheeky, or knowing.
+- GOOD: "Too Long Between Shaves?", "In Case Of Frozen Toes, Break Glass", "For Cats Who Crave The Real Thing", "Baby Smooth Shaves", "Healthy Gut Healthy Butt", "The Last Pan You'll Ever Need", "A Tinted Moisturizer For Non-Foundation People", "Remember When Life Felt Brighter?", "Strength From The Source"
+- BAD: "Reverse The Clock" (generic), "Premium Quality" (invisible), "Natural Solution" (meaningless), "Feel Better Today" (forgettable), "The Power Of Nature" (cliché)
+- The headline should make someone CURIOUS, make them SMILE, or make them THINK. If it does none of those, rewrite it.
+
+EDUCATION COPY (below headline):
+- 1-2 short lines, lighter weight
+- This is where you explain what the product actually does in plain language
+- Can be straightforward since the headline/visual does the creative heavy lifting
+- Max 15 words total
+
+OPTIONAL BOTTOM PILLS:
+- 2-3 small keyword badges (e.g., "HEALTHY AGING | BRAIN SUPPORT")
+- Only if they add value. Skip if the ad is cleaner without them.
+
+VISUAL EXECUTION QUALITY:
+- PHOTOGRAPHIC REALISM: Must look like a real photograph or a Photoshop composite by a senior designer. NOT digital illustration, NOT 3D render look, NOT AI art
+- LIGHTING: Dramatic, directional, with purpose. One key light. Real shadows. Natural falloff. The lighting should ENHANCE the concept.
+- COLOR PALETTE: Pulled from the product's brand colors. Cinematic grade. NOT oversaturated. NOT neon. Think commercial photography color science.
+- TYPOGRAPHY: Match the font style from the product packaging. Bold, confident, well-kerned. The type should look like a professional typographer set it.
+- COMPOSITION: Magazine-quality. Editorial. NOT centered and symmetric unless that's intentional. Use the rule of thirds. Let the concept BREATHE.
+- TEXTURE & DETAIL: Every surface has realistic texture. Wood grain, fabric weave, metal patina, glass refraction. NO waxy smooth AI surfaces.
+- DEPTH: Realistic depth of field. Product sharp, some background elements soft. NOT everything in perfect focus.
+
+PRODUCT INTEGRATION:
+- Product must be SHARP, well-lit, label ACCURATELY reproduced from the attached image
+- Product sits naturally in the scene — on a surface, held by someone, integrated into the concept
+- Product takes up 15-30% of canvas
+- The brand name on the product must be readable
+
+TEXT CONTRAST: White on dark, dark on light. Always. Text shadow on complex backgrounds. Squint test.
+FULL BLEED: No borders, no frames, no card edges. Edge to edge.
+SAFE ZONES: ${safeZone} padding for text.
+OUTPUT: EXACTLY ${canvasSize} pixels.
+
+FINAL CHECK — Before outputting, ask yourself:
+1. Would a creative director at a $100M DTC brand approve this concept?
+2. Would someone screenshot this ad and send it to a friend?
+3. Is there a SPECIFIC IDEA here, or is it just "product + aesthetic background"?
+4. Does the headline have PERSONALITY or is it generic marketing speak?
+5. Would this concept work ONLY for this specific product, or could it apply to anything? (If anything → too generic, redo it)
+If any answer is no, START OVER with a different concept.`;
 }
