@@ -6,7 +6,7 @@ import { Step3BrandKit } from './Step3BrandKit';
 import { Step3AdTemplates } from './Step3AdTemplates';
 import headerBanner from '@/assets/header-banner.png';
 import logoImage from '@/assets/ads-mastery-logo.png';
-import { Zap, Layers, SunMedium } from 'lucide-react';
+import { Zap } from 'lucide-react';
 
 export function CreativeGenerator() {
   const {
@@ -59,14 +59,8 @@ export function CreativeGenerator() {
           </p>
         </div>
 
-        {/* Stats row */}
-        <div className="flex items-center justify-center gap-8 md:gap-12 mb-12">
-          <StatItem icon={<Zap className="w-4 h-4 text-primary" />} value="8K" label="Resolution" />
-          <div className="w-px h-8 bg-border" />
-          <StatItem icon={<Layers className="w-4 h-4 text-primary" />} value="5+" label="Templates" />
-          <div className="w-px h-8 bg-border" />
-          <StatItem icon={<SunMedium className="w-4 h-4 text-primary" />} value="Studio" label="Lighting" />
-        </div>
+
+
 
         {/* Step Indicator */}
         <StepIndicator currentStep={step} />
@@ -134,18 +128,6 @@ export function CreativeGenerator() {
           </p>
         </div>
       </div>
-    </div>
-  );
-}
-
-function StatItem({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
-  return (
-    <div className="flex flex-col items-center gap-1.5">
-      <div className="flex items-center gap-1.5">
-        {icon}
-        <span className="text-xl md:text-2xl font-bold text-foreground">{value}</span>
-      </div>
-      <span className="text-xs text-muted-foreground uppercase tracking-wider">{label}</span>
     </div>
   );
 }
