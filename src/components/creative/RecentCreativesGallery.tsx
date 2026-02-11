@@ -62,7 +62,7 @@ export function RecentCreativesGallery() {
     return (
       <div className="mt-12 pt-8 border-t border-border">
         <div className="flex items-center gap-2 mb-6">
-          <Sparkles className="w-5 h-5 text-primary" />
+          <Sparkles className="w-5 h-5 text-accent" />
           <h3 className="text-lg font-semibold text-foreground">Recent Creatives</h3>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
@@ -81,7 +81,7 @@ export function RecentCreativesGallery() {
     return (
       <div className="mt-12 pt-8 border-t border-border">
         <div className="flex items-center gap-2 mb-6">
-          <Sparkles className="w-5 h-5 text-primary" />
+          <Sparkles className="w-5 h-5 text-accent" />
           <h3 className="text-lg font-semibold text-foreground">Recent Creatives</h3>
         </div>
         
@@ -89,7 +89,7 @@ export function RecentCreativesGallery() {
           {[...Array(5)].map((_, i) => (
             <div 
               key={i}
-              className="aspect-[9/16] rounded-xl bg-secondary/50 border border-dashed border-border flex items-center justify-center"
+              className="aspect-[9/16] rounded-xl bg-secondary/50 border border-dashed border-border/50 flex items-center justify-center"
             >
               <span className="text-xs text-muted-foreground text-center px-2">
                 {i === 0 ? 'Your creatives will appear here' : ''}
@@ -104,7 +104,7 @@ export function RecentCreativesGallery() {
   return (
     <div className="mt-12 pt-8 border-t border-border">
       <div className="flex items-center gap-2 mb-6">
-        <Sparkles className="w-5 h-5 text-primary" />
+        <Sparkles className="w-5 h-5 text-accent" />
         <h3 className="text-lg font-semibold text-foreground">Recent Creatives</h3>
         <span className="text-sm text-muted-foreground">({creatives.length})</span>
       </div>
@@ -113,7 +113,7 @@ export function RecentCreativesGallery() {
         {creatives.map((creative) => (
           <div 
             key={creative.id}
-            className="aspect-[9/16] rounded-xl overflow-hidden bg-secondary border border-border hover:border-primary/50 transition-all duration-300 hover:scale-[1.02] cursor-pointer group"
+            className="aspect-[9/16] rounded-xl overflow-hidden bg-secondary border border-border/50 hover:border-border transition-all duration-300 hover:scale-[1.02] cursor-pointer group"
           >
             <img 
               src={creative.image_url} 

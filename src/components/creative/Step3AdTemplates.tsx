@@ -136,15 +136,15 @@ function UnifiedTemplateCard({
             <p className="text-sm text-muted-foreground mt-0.5">{description}</p>
           </div>
           
-          <div className="flex items-center gap-1 bg-secondary rounded-lg p-1">
+          <div className="flex items-center gap-1 bg-secondary rounded-full p-1">
             {(['9:16', '4:5', '1:1'] as const).map(ratio => (
               <button
                 key={ratio}
                 onClick={() => setAspectRatio(ratio)}
                 className={cn(
-                  "px-3 py-1.5 text-sm font-medium rounded-md transition-all",
+                  "px-3 py-1.5 text-sm font-medium rounded-full transition-all",
                   aspectRatio === ratio 
-                    ? "bg-primary text-primary-foreground" 
+                    ? "bg-white text-black" 
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
@@ -164,8 +164,8 @@ function UnifiedTemplateCard({
             <div 
               className={cn(
                 "border rounded-xl flex items-center justify-center bg-secondary/30 relative overflow-hidden transition-colors mx-auto",
-                hasGlobalImage ? "border-primary/50" : "border-2 border-dashed",
-                !hasGlobalImage && (productImageUrl ? "border-primary/50" : "border-border hover:border-primary/30"),
+                hasGlobalImage ? "border-accent/50" : "border-2 border-dashed",
+                !hasGlobalImage && (productImageUrl ? "border-accent/50" : "border-border hover:border-border"),
                 aspectRatio === '9:16' ? 'aspect-[9/16]' : aspectRatio === '4:5' ? 'aspect-[4/5]' : 'aspect-square',
                 "max-w-[160px] sm:max-w-none"
               )}
@@ -182,7 +182,7 @@ function UnifiedTemplateCard({
                 </>
               ) : (
                 <label className="cursor-pointer text-center p-2 w-full h-full flex flex-col items-center justify-center group">
-                  <ImagePlus className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors mb-1" />
+                  <ImagePlus className="w-6 h-6 text-muted-foreground group-hover:text-accent transition-colors mb-1" />
                   <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">Upload</span>
                   <Input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                 </label>
@@ -214,7 +214,7 @@ function UnifiedTemplateCard({
                 </>
               ) : latestCreative?.status === 'generating' ? (
                 <div className="flex flex-col items-center gap-2">
-                  <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                  <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
                   <span className="text-xs text-muted-foreground">Creating your ad...</span>
                 </div>
               ) : latestCreative?.status === 'error' ? (
@@ -264,10 +264,10 @@ function UnifiedTemplateCard({
                         <span className="text-muted-foreground text-xs">{copy.subheadline_primary || copy.subheadline}</span>
                       )}
                       {copy.feature_benefits && copy.feature_benefits.length > 0 && (
-                        <div className="flex flex-col gap-0.5 mt-1 pl-1 border-l-2 border-primary/30">
+                        <div className="flex flex-col gap-0.5 mt-1 pl-1 border-l-2 border-accent/30">
                           {copy.feature_benefits.slice(0, 4).map((fb, i) => (
                             <span key={i} className="text-xs text-muted-foreground">
-                              {fb.text} <span className="text-primary/50">({fb.meaning_keywords.split(',')[0].trim()})</span>
+                              {fb.text} <span className="text-accent/50">({fb.meaning_keywords.split(',')[0].trim()})</span>
                             </span>
                           ))}
                         </div>
@@ -291,7 +291,7 @@ function UnifiedTemplateCard({
             onClick={handleGenerate}
             disabled={isGenerating || (!hasGlobalImage && !productImageUrl) || !selectedCopy}
             size="lg"
-            className="h-12 px-6 rounded-xl font-semibold gap-2 shrink-0"
+            className="h-12 px-6 rounded-full font-semibold gap-2 shrink-0 bg-[hsl(145,100%,41%)] text-black hover:bg-[hsl(145,100%,45%)]"
           >
             {isGenerating ? (
               <>
@@ -360,19 +360,19 @@ function ConceptCreativeCard({
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-lg font-semibold text-foreground">Concept Creative</h3>
-              <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">Random</span>
+              <h3 className="text-lg font-semibold text-foreground">Crazy Style</h3>
+              <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded-full font-medium">Random</span>
             </div>
-            <p className="text-sm text-muted-foreground mt-0.5">Unique cinematic concept — different every time</p>
+            <p className="text-sm text-muted-foreground mt-0.5">Wild, unique concepts — different every time</p>
           </div>
-          <div className="flex items-center gap-1 bg-secondary rounded-lg p-1">
+          <div className="flex items-center gap-1 bg-secondary rounded-full p-1">
             {(['9:16', '1:1'] as const).map(ratio => (
               <button
                 key={ratio}
                 onClick={() => setAspectRatio(ratio)}
                 className={cn(
-                  "px-3 py-1.5 text-sm font-medium rounded-md transition-all",
-                  aspectRatio === ratio ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                  "px-3 py-1.5 text-sm font-medium rounded-full transition-all",
+                  aspectRatio === ratio ? "bg-white text-black" : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {ratio}
@@ -402,7 +402,7 @@ function ConceptCreativeCard({
             </>
           ) : latestCreative?.status === 'generating' ? (
             <div className="flex flex-col items-center gap-2">
-              <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+              <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
               <span className="text-xs text-muted-foreground">Creating concept...</span>
             </div>
           ) : latestCreative?.status === 'error' ? (
@@ -418,7 +418,7 @@ function ConceptCreativeCard({
           )}
         </div>
 
-        <Button onClick={handleGenerate} disabled={isGenerating || !globalProductImage} size="lg" className="w-full h-12 rounded-xl font-semibold gap-2">
+        <Button onClick={handleGenerate} disabled={isGenerating || !globalProductImage} size="lg" className="w-full h-12 rounded-full font-semibold gap-2 bg-[hsl(145,100%,41%)] text-black hover:bg-[hsl(145,100%,45%)]">
           {isGenerating ? (
             <>
               <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
@@ -427,7 +427,7 @@ function ConceptCreativeCard({
           ) : (
             <>
               <Sparkles className="w-4 h-4" />
-              Generate Random Concept
+              Generate Crazy Style
             </>
           )}
         </Button>
@@ -445,9 +445,9 @@ export function Step3AdTemplates({ adCopies, generatedCreatives, onGenerateCreat
   return (
     <div className="space-y-6 animate-fade-in">
       {loadingStage && (
-        <div className="flex items-center justify-center gap-2 py-3 px-4 bg-primary/10 border border-primary/20 rounded-xl">
-          <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm text-primary font-medium">{loadingStage}</span>
+      <div className="flex items-center justify-center gap-2 py-3 px-4 bg-accent/10 border border-accent/20 rounded-xl">
+          <div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm text-accent font-medium">{loadingStage}</span>
         </div>
       )}
 
@@ -458,7 +458,7 @@ export function Step3AdTemplates({ adCopies, generatedCreatives, onGenerateCreat
       <ConceptCreativeCard onGenerate={onGenerateCreative} generatedCreatives={generatedCreatives} globalProductImage={productImageBase64} />
 
       <div className="pt-4">
-        <Button variant="outline" onClick={onPrev} className="h-11 px-6 rounded-xl font-medium">
+        <Button variant="outline" onClick={onPrev} className="h-11 px-6 rounded-full font-medium">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back
         </Button>

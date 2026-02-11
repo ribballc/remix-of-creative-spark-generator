@@ -126,10 +126,10 @@ export function BrandKitExtractor({ onExtracted, extractedBrandKit, productData,
   };
 
   return (
-    <Card className="border-border bg-card transition-all duration-300 hover:border-primary/30">
+    <Card className="border-border bg-card transition-all duration-300 hover:border-border">
       <CardHeader className="text-center">
         <CardTitle className="flex items-center justify-center gap-2 text-foreground">
-          <Globe className="w-5 h-5 text-primary" />
+          <Globe className="w-5 h-5 text-accent" />
           Brand Kit Extractor
         </CardTitle>
         <CardDescription className="text-muted-foreground">
@@ -142,8 +142,8 @@ export function BrandKitExtractor({ onExtracted, extractedBrandKit, productData,
       <CardContent className="space-y-4">
         {/* Auto-populated notice */}
         {hasAutoPopulated && (
-          <div className="flex items-start gap-2 p-3 bg-primary/10 rounded-xl border border-primary/20 text-sm">
-            <Info className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+          <div className="flex items-start gap-2 p-3 bg-accent/10 rounded-xl border border-accent/20 text-sm">
+            <Info className="w-4 h-4 text-accent mt-0.5 shrink-0" />
             <span className="text-foreground">
               Colors auto-populated from your product page scan. Use the URL field below to extract from a different brand website.
             </span>
@@ -208,7 +208,7 @@ export function BrandKitExtractor({ onExtracted, extractedBrandKit, productData,
           variant={extractedBrandKit ? "outline" : "default"}
           className={cn(
             "w-full rounded-xl px-8 font-semibold text-base h-12 transition-all duration-300",
-            !isExtracting && !extractedBrandKit && "hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/25"
+            !isExtracting && !extractedBrandKit && "hover:scale-[1.02] hover:shadow-lg hover:shadow-white/10"
           )}
         >
           {isExtracting ? (

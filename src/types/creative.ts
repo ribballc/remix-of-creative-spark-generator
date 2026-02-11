@@ -196,16 +196,16 @@ export const AD_TEMPLATES: AdTemplate[] = [
   },
   {
     id: 'concept_916',
-    name: 'Concept Creative',
+    name: 'Crazy Style',
     type: 'concept',
     aspectRatio: '9:16',
-    description: 'Surreal cinematic ad with visual metaphor'
+    description: 'Wild, unique concept ad'
   },
   {
     id: 'concept_11',
-    name: 'Concept Creative',
+    name: 'Crazy Style',
     type: 'concept',
     aspectRatio: '1:1',
-    description: 'Cinematic concept ad in square format'
+    description: 'Wild, unique concept ad in square'
   }
 ];
