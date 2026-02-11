@@ -34,14 +34,14 @@ export function Step1ShopifyUrl({ isLoading, loadingStage, onScan }: Step1Props)
       <div 
         className={cn(
           "bg-secondary rounded-2xl p-2 max-w-2xl mx-auto transition-all duration-300",
-          isFocused && "ring-2 ring-primary/50 shadow-lg shadow-primary/10"
+          isFocused && "ring-2 ring-accent/50 shadow-lg shadow-accent/10"
         )}
       >
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-3 flex-1 px-4">
             <Link className={cn(
               "w-5 h-5 shrink-0 transition-colors duration-200",
-              isFocused ? "text-primary" : "text-muted-foreground"
+              isFocused ? "text-accent" : "text-muted-foreground"
             )} />
             <input
               type="url"
@@ -123,7 +123,7 @@ function ScanningAnimation({ currentStage }: { currentStage: string }) {
                 key={step.key}
                 className={cn(
                   "flex items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-300",
-                  status === 'active' && "bg-primary/10 border border-primary/20",
+                  status === 'active' && "bg-accent/10 border border-accent/20",
                   status === 'done' && "opacity-60",
                   status === 'pending' && "opacity-40"
                 )}
@@ -136,10 +136,10 @@ function ScanningAnimation({ currentStage }: { currentStage: string }) {
                   {step.label}
                 </span>
                 {status === 'active' && (
-                  <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
                 )}
                 {status === 'done' && (
-                  <Check className="w-4 h-4 text-accent" />
+                  <Check className="w-4 h-4 text-[hsl(145,100%,41%)]" />
                 )}
               </div>
             );
